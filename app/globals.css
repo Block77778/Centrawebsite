@@ -1,0 +1,271 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated color tokens to match world.org minimal aesthetic */
+  --background: #ffffff; /* Pure white background */
+  --foreground: #000000; /* Black text for maximum contrast */
+  --card: #f8f9fa; /* Light gray for product cards */
+  --card-foreground: #343a40; /* Dark gray for card text */
+  --popover: #ffffff; /* White popover background */
+  --popover-foreground: #000000; /* Black popover text */
+  --primary: #000000; /* Black for primary buttons */
+  --primary-foreground: #ffffff; /* White text on primary */
+  --secondary: #6c757d; /* Muted gray for secondary elements */
+  --secondary-foreground: #ffffff; /* White text on secondary */
+  --muted: #f8f9fa; /* Light gray for muted sections */
+  --muted-foreground: #343a40; /* Dark gray for muted text */
+  --accent: #6c757d; /* Muted gray for accents */
+  --accent-foreground: #ffffff; /* White text on accent */
+  --destructive: #dc3545; /* Red for destructive actions */
+  --destructive-foreground: #ffffff; /* White text on destructive */
+  --border: #e9ecef; /* Light border color */
+  --input: #ffffff; /* White input background */
+  --ring: rgba(0, 0, 0, 0.1); /* Subtle black focus ring */
+  --chart-1: #000000; /* Black chart color */
+  --chart-2: #343a40; /* Dark gray chart color */
+  --chart-3: #6c757d; /* Muted gray chart color */
+  --chart-4: #adb5bd; /* Light gray chart color */
+  --chart-5: #dee2e6; /* Very light gray chart color */
+  --radius: 0.5rem; /* Rounded corners */
+  --sidebar: #ffffff; /* White sidebar background */
+  --sidebar-foreground: #000000; /* Black sidebar text */
+  --sidebar-primary: #f8f9fa; /* Light gray sidebar primary */
+  --sidebar-primary-foreground: #343a40; /* Dark gray sidebar primary text */
+  --sidebar-accent: #6c757d; /* Muted gray sidebar accent */
+  --sidebar-accent-foreground: #ffffff; /* White sidebar accent text */
+  --sidebar-border: #e9ecef; /* Light sidebar border */
+  --sidebar-ring: rgba(0, 0, 0, 0.1); /* Subtle sidebar focus ring */
+}
+
+.dark {
+  /* Updated dark mode tokens for minimal aesthetic */
+  --background: #000000; /* Pure black background */
+  --foreground: #ffffff; /* White text */
+  --card: #1a1a1a; /* Dark gray card background */
+  --card-foreground: #e9ecef; /* Light gray card text */
+  --popover: #1a1a1a; /* Dark popover background */
+  --popover-foreground: #ffffff; /* White popover text */
+  --primary: #ffffff; /* White for primary buttons in dark mode */
+  --primary-foreground: #000000; /* Black text on primary */
+  --secondary: #6c757d; /* Same muted gray secondary */
+  --secondary-foreground: #ffffff; /* White text on secondary */
+  --muted: #1a1a1a; /* Dark muted background */
+  --muted-foreground: #adb5bd; /* Light gray muted text */
+  --accent: #6c757d; /* Same muted gray accent */
+  --accent-foreground: #ffffff; /* White text on accent */
+  --destructive: #dc3545; /* Same red destructive */
+  --destructive-foreground: #ffffff; /* White text on destructive */
+  --border: #343a40; /* Dark border */
+  --input: #1a1a1a; /* Dark input background */
+  --ring: rgba(255, 255, 255, 0.1); /* Subtle white ring */
+  --chart-1: #ffffff; /* White chart color */
+  --chart-2: #e9ecef; /* Light gray chart color */
+  --chart-3: #adb5bd; /* Medium gray chart color */
+  --chart-4: #6c757d; /* Muted gray chart color */
+  --chart-5: #343a40; /* Dark gray chart color */
+  --sidebar: #000000; /* Black sidebar */
+  --sidebar-foreground: #ffffff; /* White sidebar text */
+  --sidebar-primary: #1a1a1a; /* Dark sidebar primary */
+  --sidebar-primary-foreground: #e9ecef; /* Light sidebar primary text */
+  --sidebar-accent: #6c757d; /* Muted gray sidebar accent */
+  --sidebar-accent-foreground: #ffffff; /* White sidebar accent text */
+  --sidebar-border: #343a40; /* Dark sidebar border */
+  --sidebar-ring: rgba(255, 255, 255, 0.1); /* Subtle sidebar ring */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Updated fonts to match world.org clean aesthetic */
+  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+  --font-serif: "Manrope", Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+/* Adding premium animations and effects for fine-tuned polish */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slowZoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-slow-zoom {
+  animation: slowZoom 20s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced hover effects for premium feel */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Smooth scroll behavior for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus states for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-all duration-200;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground);
+}
