@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Globe, Shield, Smartphone, Zap, Users, TrendingUp, Eye } from "lucide-react"
+import { Card, CardDescription, CardTitle } from "@/components/ui/card"
+import { ArrowRight, Users, TrendingUp, Eye } from "lucide-react"
 import PersistentCTA from "@/components/PersistentCTA"
 import { Input } from "@/components/ui/input"
 
@@ -319,155 +319,116 @@ export default function CentraHomepage() {
             </div>
           </div>
 
-          <div className="mt-32 grid md:grid-cols-2 gap-16">
-            <Card className="p-10 border-red-200 bg-gradient-to-br from-red-50 to-red-100 hover:shadow-xl transition-all duration-300">
-              <h3 className="text-3xl font-semibold text-red-700 mb-8 flex items-center gap-4">
-                <span className="text-2xl">🏦</span> Fiat Currency Problems
-              </h3>
-              <ul className="space-y-6 text-red-600">
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-red-500 mt-1 text-xl">✗</span>
-                  <span>Inflation erodes purchasing power over time</span>
-                </li>
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-red-500 mt-1 text-xl">✗</span>
-                  <span>Central bank manipulation and control</span>
-                </li>
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-red-500 mt-1 text-xl">✗</span>
-                  <span>Lack of transparency in monetary policy</span>
-                </li>
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-red-500 mt-1 text-xl">✗</span>
-                  <span>Unequal access to financial systems</span>
-                </li>
-              </ul>
-            </Card>
+          <div className="mt-32">
+            <div className="text-center mb-16">
+              <h3 className="text-4xl md:text-5xl font-medium text-foreground mb-6">The Financial Revolution</h3>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                Compare the limitations of traditional fiat currency with Centra's innovative solutions for a better
+                financial future.
+              </p>
+            </div>
 
-            <Card className="p-10 border-cyan-200 bg-gradient-to-br from-cyan-50 to-blue-100 hover:shadow-xl transition-all duration-300">
-              <h3 className="text-3xl font-semibold text-cyan-700 mb-8 flex items-center gap-4">
-                <span className="text-2xl">🌟</span> Centra Solutions
-              </h3>
-              <ul className="space-y-6 text-cyan-600">
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-cyan-500 mt-1 text-xl">✓</span>
-                  <span>Fixed supply prevents inflation and devaluation</span>
-                </li>
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-cyan-500 mt-1 text-xl">✓</span>
-                  <span>Decentralized governance by the community</span>
-                </li>
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-cyan-500 mt-1 text-xl">✓</span>
-                  <span>Complete transparency in all transactions</span>
-                </li>
-                <li className="flex items-start gap-4 text-lg">
-                  <span className="text-cyan-500 mt-1 text-xl">✓</span>
-                  <span>Equal access for everyone, everywhere</span>
-                </li>
-              </ul>
-            </Card>
+            <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+              {/* Fiat Problems Card */}
+              <Card className="border border-border bg-background hover:shadow-xl hover:scale-105 transition-all duration-300 p-8">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-muted to-muted/80 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">🏦</span>
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-medium text-foreground">Fiat Currency Problems</h4>
+                    <p className="text-muted-foreground">Current system limitations</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {[
+                    {
+                      title: "Inflation erodes purchasing power over time",
+                      description: "Central banks print unlimited money, devaluing your savings",
+                    },
+                    {
+                      title: "Central bank manipulation and control",
+                      description: "Monetary policy serves institutions, not people",
+                    },
+                    {
+                      title: "Lack of transparency in monetary policy",
+                      description: "Hidden operations and backroom financial deals",
+                    },
+                    {
+                      title: "Unequal access to financial systems",
+                      description: "Billions excluded from basic financial services",
+                    },
+                  ].map((problem, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full mt-3 flex-shrink-0" />
+                      <div>
+                        <p className="text-foreground font-medium mb-1">{problem.title}</p>
+                        <p className="text-muted-foreground text-sm">{problem.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Centra Solutions Card */}
+              <Card className="border border-border bg-gradient-to-br from-cyan-50/50 to-blue-50/50 hover:shadow-xl hover:scale-105 transition-all duration-300 p-8">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">✨</span>
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-medium text-cyan-600">Centra Solutions</h4>
+                    <p className="text-cyan-600/80">Revolutionary improvements</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {[
+                    {
+                      title: "Fixed supply prevents inflation and devaluation",
+                      description: "Your wealth is preserved with mathematical certainty",
+                    },
+                    {
+                      title: "Decentralized governance by the community",
+                      description: "Democratic decision-making puts power in people's hands",
+                    },
+                    {
+                      title: "Complete transparency in all transactions",
+                      description: "Every operation is publicly verifiable on the blockchain",
+                    },
+                    {
+                      title: "Equal access for everyone, everywhere",
+                      description: "No barriers, no discrimination, universal financial inclusion",
+                    },
+                  ].map((solution, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-cyan-600 rounded-full mt-3 flex-shrink-0" />
+                      <div>
+                        <p className="text-cyan-600 font-medium mb-1">{solution.title}</p>
+                        <p className="text-cyan-600/80 text-sm">{solution.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
+
+            {/* Simplified call to action */}
+            <div className="text-center mt-12">
+              <Button
+                size="lg"
+                className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-4 text-lg font-medium hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                Join the Financial Revolution
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="py-24 px-6 bg-gradient-to-b from-muted/20 to-background">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-sm text-muted-foreground mb-6 uppercase tracking-wider font-medium">Products</p>
-            <h2 className="text-4xl md:text-5xl font-medium text-foreground mb-8 leading-tight">
-              The Centra Ecosystem
-            </h2>
-          </div>
-          <div className="grid gap-10">
-            <Card className="border border-border bg-background hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-6 p-10">
-                <div className="flex items-center space-x-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Shield className="h-8 w-8 text-cyan-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl font-medium text-foreground group-hover:text-cyan-600 transition-colors duration-300">
-                      Centra ID
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground text-lg mt-2">
-                      Your passport to the digital age of AI.
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            <Card className="border border-border bg-background hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-6 p-10">
-                <div className="flex items-center space-x-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Smartphone className="h-8 w-8 text-cyan-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl font-medium text-foreground group-hover:text-cyan-600 transition-colors duration-300">
-                      Centra App
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground text-lg mt-2">
-                      The app that puts humans first.
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            <Card className="border border-border bg-background hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-6 p-10">
-                <div className="flex items-center space-x-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Globe className="h-8 w-8 text-cyan-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl font-medium text-foreground group-hover:text-cyan-600 transition-colors duration-300">
-                      Centra Chain
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground text-lg mt-2">
-                      The blockchain designed for humans.
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            <Card className="border border-border bg-background hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-6 p-10">
-                <div className="flex items-center space-x-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Zap className="h-8 w-8 text-cyan-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl font-medium text-foreground group-hover:text-cyan-600 transition-colors duration-300">
-                      Centracoin
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground text-lg mt-2">
-                      A token that distributes the upside of AI to everyone.
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-32 px-6 bg-gradient-to-br from-cyan-50 via-blue-50 to-cyan-100">
-        <div className="max-w-5xl mx-auto text-center">
-          <blockquote className="text-4xl md:text-5xl lg:text-6xl font-medium text-foreground mb-12 leading-tight">
-            "Money should serve people, not control them."
-          </blockquote>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            This is the founding principle behind Centra - a financial system designed for transparency, stability, and
-            equality.
-          </p>
-        </div>
-      </section>
-
-      <section className="py-24 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <h3 className="text-4xl font-medium text-foreground mb-6">Quick Links</h3>
