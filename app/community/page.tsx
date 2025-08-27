@@ -30,6 +30,7 @@ import {
   RefreshCw,
 } from "lucide-react"
 import PersistentCTA from "../../components/PersistentCTA"
+import Image from "next/image"
 import { useState, useEffect, useCallback } from "react"
 
 export default function CentraSocialPage() {
@@ -329,9 +330,14 @@ export default function CentraSocialPage() {
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link href="/" className="text-2xl font-bold text-primary">
-              Centra Social
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/centra-wordmark.png"
+                alt="Centra Social"
+                width={120}
+                height={36}
+                className="hover:scale-110 transition-transform duration-200"
+              />
             </Link>
 
             {/* Desktop Navigation Menu */}
@@ -830,6 +836,15 @@ export default function CentraSocialPage() {
 
       <section className="py-16 bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center mb-12">
+            <Image
+              src="/centra-wordmark.png"
+              alt="Centra"
+              width={200}
+              height={60}
+              className="hover:scale-105 transition-transform duration-200"
+            />
+          </div>
           <h2 className="text-3xl font-bold text-foreground mb-12 text-center">Centra Social Stats</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
