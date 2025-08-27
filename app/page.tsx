@@ -6,6 +6,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Users, TrendingUp, Eye } from "lucide-react"
 import PersistentCTA from "@/components/PersistentCTA"
 import { Input } from "@/components/ui/input"
+import Image from "next/image"
 
 export default function CentraHomepage() {
   const [email, setEmail] = useState("")
@@ -22,10 +23,14 @@ export default function CentraHomepage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
-              <div className="font-sans text-xl font-semibold text-foreground">
-                <a href="/" aria-label="Centra homepage" className="hover:text-cyan-600 transition-colors">
-                  Centra
-                </a>
+              <div className="flex items-center">
+                <Image
+                  src="/centra-wordmark.png"
+                  alt="Centra"
+                  width={120}
+                  height={36}
+                  className="hover:scale-110 transition-transform duration-200"
+                />
               </div>
               <div className="hidden md:flex items-center space-x-6 text-sm">
                 <a
@@ -106,7 +111,7 @@ export default function CentraHomepage() {
               </span>
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-light mb-8 leading-tight tracking-tight">
-              Centra: A Stable,
+              A Stable,
               <br />
               <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-300 bg-clip-text text-transparent font-medium animate-gradient">
                 Transparent Future
@@ -301,9 +306,15 @@ export default function CentraHomepage() {
                           2025 - THE FUTURE
                         </span>
                       </div>
-                      <h3 className="text-6xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-6">
-                        CENTRA
-                      </h3>
+                      <div className="flex justify-center mb-6">
+                        <Image
+                          src="/centra-wordmark.png"
+                          alt="Centra"
+                          width={300}
+                          height={90}
+                          className="hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
                       <div className="text-2xl font-semibold text-cyan-600 mb-6">The Next Evolution</div>
                     </div>
                     <p className="mb-8 leading-relaxed text-xl text-cyan-600 font-medium">
@@ -375,7 +386,13 @@ export default function CentraHomepage() {
               <Card className="border border-border bg-gradient-to-br from-cyan-50/50 to-blue-50/50 hover:shadow-xl hover:scale-105 transition-all duration-300 p-8">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">✨</span>
+                    <Image
+                      src="/centra-icon.png"
+                      alt="Centra"
+                      width={56}
+                      height={56}
+                      className="hover:scale-110 transition-transform duration-200"
+                    />
                   </div>
                   <div>
                     <h4 className="text-2xl font-medium text-cyan-600">Centra Solutions</h4>
@@ -544,6 +561,16 @@ export default function CentraHomepage() {
 
       <footer className="border-t border-border py-16 px-6" role="contentinfo">
         <div className="max-w-6xl mx-auto">
+          <div className="flex justify-center mb-12">
+            <Image
+              src="/centra-wordmark.png"
+              alt="Centra"
+              width={200}
+              height={60}
+              className="hover:scale-105 transition-transform duration-200"
+            />
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
             <div>
               <h4 className="font-medium text-foreground mb-4">Centra ID</h4>
