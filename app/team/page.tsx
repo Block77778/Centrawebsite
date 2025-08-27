@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
+import Image from "next/image"
 
 export default function TeamPage() {
   return (
@@ -10,7 +11,15 @@ export default function TeamPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
-              <div className="font-sans text-xl font-semibold text-foreground">Centra</div>
+              <div className="flex items-center">
+                <Image
+                  src="/centra-wordmark.png"
+                  alt="Centra"
+                  width={120}
+                  height={36}
+                  className="hover:scale-110 transition-transform duration-200"
+                />
+              </div>
               <div className="hidden md:flex items-center space-x-6 text-sm">
                 <a href="/" className="text-foreground hover:text-muted-foreground">
                   Home
