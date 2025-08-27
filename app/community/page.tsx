@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Heart,
   MessageCircle,
@@ -24,12 +25,302 @@ import {
   TrendingUp,
   BookOpen,
   Code,
+  ImageIcon,
+  Send,
+  RefreshCw,
 } from "lucide-react"
 import PersistentCTA from "../../components/PersistentCTA"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 export default function CentraSocialPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [newPost, setNewPost] = useState("")
+  const [newPostTitle, setNewPostTitle] = useState("")
+  const [isCreatingPost, setIsCreatingPost] = useState(false)
+  const [showComments, setShowComments] = useState<{ [key: number]: boolean }>({})
+  const [newComment, setNewComment] = useState<{ [key: number]: string }>({})
+  const [notifications, setNotifications] = useState<string[]>([])
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [lastUpdate, setLastUpdate] = useState(Date.now())
+  const [posts, setPosts] = useState([
+    {
+      id: 1,
+      user: "Alex Chen",
+      handle: "@alexchen",
+      avatar: "/asian-male-developer.png",
+      level: "Core Contributor",
+      time: "2h",
+      title: "Thoughts on Centra's inflation-proof mechanism",
+      content:
+        "I've been analyzing the fixed supply model and its implications for long-term stability. The mathematical approach seems sound, but I'd love to hear thoughts on potential edge cases...",
+      image: "/cryptocurrency-chart-analysis.png",
+      likes: 24,
+      comments: 8,
+      shares: 3,
+      tags: ["Economics", "Discussion"],
+      liked: false,
+      commentsList: [
+        {
+          id: 1,
+          user: "Sarah Kim",
+          handle: "@sarahkim",
+          avatar: "/asian-female-designer.png",
+          content: "Great analysis! Have you considered the impact on transaction fees?",
+          time: "1h",
+        },
+        {
+          id: 2,
+          user: "David Rodriguez",
+          handle: "@daviddev",
+          avatar: "/hispanic-male-developer.png",
+          content: "This is exactly what we need for long-term stability.",
+          time: "45m",
+        },
+      ],
+    },
+    {
+      id: 2,
+      user: "Sarah Kim",
+      handle: "@sarahkim",
+      avatar: "/asian-female-designer.png",
+      level: "Community Member",
+      time: "5h",
+      title: "Feature Request: Mobile wallet improvements",
+      content:
+        "The current mobile experience could use some UX improvements. Here are some mockups I created for better transaction flow...",
+      image: "/mobile-wallet-ui-mockup.png",
+      likes: 18,
+      comments: 12,
+      shares: 5,
+      tags: ["Feature Request", "UX"],
+      liked: false,
+      commentsList: [
+        {
+          id: 1,
+          user: "Alex Chen",
+          handle: "@alexchen",
+          avatar: "/asian-male-developer.png",
+          content: "Love the mockups! The swipe gesture for quick send is brilliant.",
+          time: "3h",
+        },
+      ],
+    },
+    {
+      id: 3,
+      user: "David Rodriguez",
+      handle: "@daviddev",
+      avatar: "/hispanic-male-developer.png",
+      level: "Developer",
+      time: "1d",
+      title: "Built a Centra price tracker - open source",
+      content:
+        "Just finished building a real-time price tracking dashboard for Centra. Code is available on GitHub, would love feedback and contributions!",
+      image: null,
+      likes: 31,
+      comments: 15,
+      shares: 8,
+      tags: ["Project", "Open Source"],
+      liked: false,
+      commentsList: [
+        {
+          id: 1,
+          user: "Crypto Mike",
+          handle: "@cryptomike",
+          avatar: "/crypto-user.png",
+          content: "This is awesome! Just starred the repo. Will contribute soon.",
+          time: "12h",
+        },
+        {
+          id: 2,
+          user: "DeFi Sarah",
+          handle: "@defisarah",
+          avatar: "/defi-user.png",
+          content: "Can you add support for multiple exchanges?",
+          time: "8h",
+        },
+      ],
+    },
+  ])
+
+  const simulatedPosts = [
+    {
+      user: "Crypto Mike",
+      handle: "@cryptomike",
+      avatar: "/crypto-user.png",
+      level: "Community Member",
+      title: "Market analysis: Centra's performance this week",
+      content:
+        "Looking at the charts, Centra has shown remarkable stability compared to other cryptocurrencies. The fixed supply model is really proving its worth!",
+      tags: ["Analysis", "Market"],
+    },
+    {
+      user: "DeFi Sarah",
+      handle: "@defisarah",
+      avatar: "/defi-user.png",
+      level: "Developer",
+      title: "New DeFi integration proposal",
+      content:
+        "I've been working on a proposal for integrating Centra with major DeFi protocols. This could open up new opportunities for yield farming and liquidity provision.",
+      tags: ["DeFi", "Proposal"],
+    },
+    {
+      user: "Blockchain Dev",
+      handle: "@blockdev",
+      avatar: "/developer-working.png",
+      level: "Core Contributor",
+      title: "Smart contract audit results",
+      content:
+        "Just completed the security audit for the latest smart contract updates. Everything looks solid - no critical vulnerabilities found!",
+      tags: ["Security", "Development"],
+    },
+  ]
+
+  const addRandomActivity = useCallback(() => {
+    const activities = [
+      "New post from community member",
+      "Someone liked your post",
+      "New comment on trending discussion",
+      "User joined the community",
+      "New feature announcement",
+    ]
+
+    const randomActivity = activities[Math.floor(Math.random() * activities.length)]
+    setNotifications((prev) => [randomActivity, ...prev.slice(0, 4)])
+
+    // Randomly update post engagement
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (Math.random() < 0.3) {
+          // 30% chance to update each post
+          const likeChange = Math.random() < 0.7 ? 1 : 0
+          const commentChange = Math.random() < 0.4 ? 1 : 0
+          return {
+            ...post,
+            likes: post.likes + likeChange,
+            comments: post.comments + commentChange,
+          }
+        }
+        return post
+      }),
+    )
+  }, [])
+
+  const addSimulatedPost = useCallback(() => {
+    const randomPost = simulatedPosts[Math.floor(Math.random() * simulatedPosts.length)]
+    const newPost = {
+      id: Date.now(),
+      ...randomPost,
+      time: "now",
+      likes: Math.floor(Math.random() * 10),
+      comments: Math.floor(Math.random() * 5),
+      shares: Math.floor(Math.random() * 3),
+      liked: false,
+      commentsList: [],
+      image: null,
+    }
+
+    setPosts((prevPosts) => [newPost, ...prevPosts])
+    setNotifications((prev) => [`New post: ${newPost.title}`, ...prev.slice(0, 4)])
+  }, [simulatedPosts])
+
+  useEffect(() => {
+    const activityInterval = setInterval(addRandomActivity, 15000) // Every 15 seconds
+    const postInterval = setInterval(addSimulatedPost, 45000) // Every 45 seconds
+
+    return () => {
+      clearInterval(activityInterval)
+      clearInterval(postInterval)
+    }
+  }, [addRandomActivity, addSimulatedPost])
+
+  const handleCreatePost = () => {
+    if (newPost.trim() || newPostTitle.trim()) {
+      const post = {
+        id: posts.length + 1,
+        user: "You",
+        handle: "@you",
+        avatar: "/user-profile-illustration.png",
+        level: "Community Member",
+        time: "now",
+        title: newPostTitle || "New Post",
+        content: newPost,
+        image: null,
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        tags: ["Discussion"],
+        liked: false,
+        commentsList: [],
+      }
+      setPosts([post, ...posts])
+      setNewPost("")
+      setNewPostTitle("")
+      setIsCreatingPost(false)
+      setNotifications((prev) => ["You created a new post", ...prev.slice(0, 4)])
+    }
+  }
+
+  const handleLike = (postId: number) => {
+    setPosts(
+      posts.map((post) =>
+        post.id === postId
+          ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1 }
+          : post,
+      ),
+    )
+  }
+
+  const handleComment = (postId: number) => {
+    setShowComments((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }))
+  }
+
+  const handleShare = (postId: number) => {
+    console.log("[v0] Share clicked for post:", postId)
+    setPosts(posts.map((post) => (post.id === postId ? { ...post, shares: post.shares + 1 } : post)))
+    setNotifications((prev) => ["You shared a post", ...prev.slice(0, 4)])
+  }
+
+  const handleAddComment = (postId: number) => {
+    const commentText = newComment[postId]?.trim()
+    if (commentText) {
+      const newCommentObj = {
+        id: Date.now(),
+        user: "You",
+        handle: "@you",
+        avatar: "/user-profile-illustration.png",
+        content: commentText,
+        time: "now",
+      }
+
+      setPosts(
+        posts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                commentsList: [newCommentObj, ...post.commentsList],
+                comments: post.comments + 1,
+              }
+            : post,
+        ),
+      )
+
+      setNewComment((prev) => ({
+        ...prev,
+        [postId]: "",
+      }))
+
+      setNotifications((prev) => ["You commented on a post", ...prev.slice(0, 4)])
+    }
+  }
+
+  const refreshFeed = () => {
+    setLastUpdate(Date.now())
+    addRandomActivity()
+    setNotifications((prev) => ["Feed refreshed", ...prev.slice(0, 4)])
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,16 +392,48 @@ export default function CentraSocialPage() {
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
                 <Compass className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-primary"
+                  onClick={() => setShowNotifications(!showNotifications)}
+                >
+                  <Bell className="w-5 h-5" />
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {notifications.length}
+                    </span>
+                  )}
+                </Button>
+                {showNotifications && (
+                  <div className="absolute right-0 top-12 w-80 bg-card border border-border rounded-lg shadow-lg z-50">
+                    <div className="p-4">
+                      <h3 className="font-semibold text-foreground mb-3">Recent Activity</h3>
+                      <div className="space-y-2">
+                        {notifications.length > 0 ? (
+                          notifications.map((notification, index) => (
+                            <div key={index} className="text-sm text-muted-foreground p-2 bg-muted rounded">
+                              {notification}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-sm text-muted-foreground">No new notifications</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
                 <Mail className="w-5 h-5" />
               </Button>
-              <Avatar className="w-8 h-8">
-                <AvatarImage src="/user-profile-illustration.png" />
-                <AvatarFallback>You</AvatarFallback>
-              </Avatar>
+              <Link href="/community/profile">
+                <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
+                  <AvatarImage src="/user-profile-illustration.png" />
+                  <AvatarFallback>You</AvatarFallback>
+                </Avatar>
+              </Link>
 
               {/* Mobile Menu Toggle */}
               <Button
@@ -241,25 +564,98 @@ export default function CentraSocialPage() {
           </aside>
 
           <main className="lg:col-span-3">
+            {/* Feed Header with Refresh */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-foreground">Latest Posts</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refreshFeed}
+                className="flex items-center gap-2 bg-transparent"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Refresh
+              </Button>
+            </div>
+
             {/* Create Post */}
             <Card className="mb-6">
               <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src="/user-profile-illustration.png" />
-                    <AvatarFallback>You</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <Input
-                      placeholder="What's on your mind about Centra?"
-                      className="bg-muted border-0 focus:ring-2 focus:ring-primary"
-                    />
+                {!isCreatingPost ? (
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src="/user-profile-illustration.png" />
+                      <AvatarFallback>You</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <Input
+                        placeholder="What's on your mind about Centra?"
+                        className="bg-muted border-0 focus:ring-2 focus:ring-primary cursor-pointer"
+                        onClick={() => setIsCreatingPost(true)}
+                        readOnly
+                      />
+                    </div>
+                    <Button
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      onClick={() => setIsCreatingPost(true)}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Post
+                    </Button>
                   </div>
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Post
-                  </Button>
-                </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src="/user-profile-illustration.png" />
+                        <AvatarFallback>You</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <Input
+                          placeholder="Post title (optional)"
+                          value={newPostTitle}
+                          onChange={(e) => setNewPostTitle(e.target.value)}
+                          className="bg-muted border-0 focus:ring-2 focus:ring-primary mb-2"
+                        />
+                        <Textarea
+                          placeholder="What's on your mind about Centra?"
+                          value={newPost}
+                          onChange={(e) => setNewPost(e.target.value)}
+                          className="bg-muted border-0 focus:ring-2 focus:ring-primary min-h-[100px] resize-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                          <ImageIcon className="w-4 h-4 mr-1" />
+                          Photo
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setIsCreatingPost(false)
+                            setNewPost("")
+                            setNewPostTitle("")
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                          onClick={handleCreatePost}
+                          disabled={!newPost.trim() && !newPostTitle.trim()}
+                        >
+                          <Send className="w-4 h-4 mr-2" />
+                          Post
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -281,53 +677,8 @@ export default function CentraSocialPage() {
 
             {/* Posts Feed */}
             <div className="space-y-6">
-              {[
-                {
-                  user: "Alex Chen",
-                  handle: "@alexchen",
-                  avatar: "/asian-male-developer.png",
-                  level: "Core Contributor",
-                  time: "2h",
-                  title: "Thoughts on Centra's inflation-proof mechanism",
-                  content:
-                    "I've been analyzing the fixed supply model and its implications for long-term stability. The mathematical approach seems sound, but I'd love to hear thoughts on potential edge cases...",
-                  image: "/cryptocurrency-chart-analysis.png",
-                  likes: 24,
-                  comments: 8,
-                  shares: 3,
-                  tags: ["Economics", "Discussion"],
-                },
-                {
-                  user: "Sarah Kim",
-                  handle: "@sarahkim",
-                  avatar: "/asian-female-designer.png",
-                  level: "Community Member",
-                  time: "5h",
-                  title: "Feature Request: Mobile wallet improvements",
-                  content:
-                    "The current mobile experience could use some UX improvements. Here are some mockups I created for better transaction flow...",
-                  image: "/mobile-wallet-ui-mockup.png",
-                  likes: 18,
-                  comments: 12,
-                  shares: 5,
-                  tags: ["Feature Request", "UX"],
-                },
-                {
-                  user: "David Rodriguez",
-                  handle: "@daviddev",
-                  avatar: "/hispanic-male-developer.png",
-                  level: "Developer",
-                  time: "1d",
-                  title: "Built a Centra price tracker - open source",
-                  content:
-                    "Just finished building a real-time price tracking dashboard for Centra. Code is available on GitHub, would love feedback and contributions!",
-                  likes: 31,
-                  comments: 15,
-                  shares: 8,
-                  tags: ["Project", "Open Source"],
-                },
-              ].map((post, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
+              {posts.map((post) => (
+                <Card key={post.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -376,20 +727,99 @@ export default function CentraSocialPage() {
 
                     <div className="flex items-center justify-between pt-3 border-t border-border">
                       <div className="flex items-center gap-6">
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                          <Heart className="w-4 h-4 mr-1" />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`transition-colors ${
+                            post.liked ? "text-red-500 hover:text-red-600" : "text-muted-foreground hover:text-primary"
+                          }`}
+                          onClick={() => handleLike(post.id)}
+                        >
+                          <Heart className={`w-4 h-4 mr-1 ${post.liked ? "fill-current" : ""}`} />
                           {post.likes}
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`transition-colors ${
+                            showComments[post.id] ? "text-primary" : "text-muted-foreground hover:text-primary"
+                          }`}
+                          onClick={() => handleComment(post.id)}
+                        >
                           <MessageCircle className="w-4 h-4 mr-1" />
                           {post.comments}
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-primary"
+                          onClick={() => handleShare(post.id)}
+                        >
                           <Share2 className="w-4 h-4 mr-1" />
                           {post.shares}
                         </Button>
                       </div>
                     </div>
+
+                    {/* Comments Section */}
+                    {showComments[post.id] && (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        {/* Add Comment Input */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <Avatar className="w-8 h-8">
+                            <AvatarImage src="/user-profile-illustration.png" />
+                            <AvatarFallback>You</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 flex gap-2">
+                            <Input
+                              placeholder="Write a comment..."
+                              value={newComment[post.id] || ""}
+                              onChange={(e) =>
+                                setNewComment((prev) => ({
+                                  ...prev,
+                                  [post.id]: e.target.value,
+                                }))
+                              }
+                              className="bg-muted border-0 focus:ring-2 focus:ring-primary"
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  handleAddComment(post.id)
+                                }
+                              }}
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => handleAddComment(post.id)}
+                              disabled={!newComment[post.id]?.trim()}
+                              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                            >
+                              <Send className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Comments List */}
+                        <div className="space-y-3">
+                          {post.commentsList.map((comment) => (
+                            <div key={comment.id} className="flex items-start gap-3">
+                              <Avatar className="w-8 h-8">
+                                <AvatarImage src={comment.avatar || "/placeholder.svg"} />
+                                <AvatarFallback>{comment.user[0]}</AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 bg-muted rounded-lg p-3">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="font-medium text-sm text-foreground">{comment.user}</span>
+                                  <span className="text-xs text-muted-foreground">{comment.handle}</span>
+                                  <span className="text-xs text-muted-foreground">•</span>
+                                  <span className="text-xs text-muted-foreground">{comment.time}</span>
+                                </div>
+                                <p className="text-sm text-foreground">{comment.content}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
