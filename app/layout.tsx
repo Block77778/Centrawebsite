@@ -27,6 +27,14 @@ export const metadata: Metadata = {
   creator: "Centra",
   publisher: "Centra",
   robots: "index, follow",
+  icons: {
+    icon: [
+      { url: "/centra-icon.png", sizes: "32x32", type: "image/png" },
+      { url: "/centra-badge.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/centra-badge.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/centra-icon.png",
+  },
   openGraph: {
     title: "Centra - The Future Beyond Fiat",
     description:
@@ -36,7 +44,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/centra-wordmark.png",
         width: 1200,
         height: 630,
         alt: "Centra - The Future Beyond Fiat",
@@ -47,7 +55,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Centra - The Future Beyond Fiat",
     description: "A stable, transparent future beyond fiat currency.",
-    images: ["/og-image.jpg"],
+    images: ["/centra-wordmark.png"],
   },
   generator: "v0.app",
 }
