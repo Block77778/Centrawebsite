@@ -4,76 +4,77 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color tokens to match world.org minimal aesthetic */
-  --background: #ffffff; /* Pure white background */
-  --foreground: #000000; /* Black text for maximum contrast */
-  --card: #f8f9fa; /* Light gray for product cards */
-  --card-foreground: #343a40; /* Dark gray for card text */
-  --popover: #ffffff; /* White popover background */
-  --popover-foreground: #000000; /* Black popover text */
-  --primary: #000000; /* Black for primary buttons */
-  --primary-foreground: #ffffff; /* White text on primary */
-  --secondary: #6c757d; /* Muted gray for secondary elements */
-  --secondary-foreground: #ffffff; /* White text on secondary */
-  --muted: #f8f9fa; /* Light gray for muted sections */
-  --muted-foreground: #343a40; /* Dark gray for muted text */
-  --accent: #6c757d; /* Muted gray for accents */
-  --accent-foreground: #ffffff; /* White text on accent */
-  --destructive: #dc3545; /* Red for destructive actions */
-  --destructive-foreground: #ffffff; /* White text on destructive */
-  --border: #e9ecef; /* Light border color */
-  --input: #ffffff; /* White input background */
-  --ring: rgba(0, 0, 0, 0.1); /* Subtle black focus ring */
-  --chart-1: #000000; /* Black chart color */
-  --chart-2: #343a40; /* Dark gray chart color */
-  --chart-3: #6c757d; /* Muted gray chart color */
-  --chart-4: #adb5bd; /* Light gray chart color */
-  --chart-5: #dee2e6; /* Very light gray chart color */
-  --radius: 0.5rem; /* Rounded corners */
-  --sidebar: #ffffff; /* White sidebar background */
-  --sidebar-foreground: #000000; /* Black sidebar text */
-  --sidebar-primary: #f8f9fa; /* Light gray sidebar primary */
-  --sidebar-primary-foreground: #343a40; /* Dark gray sidebar primary text */
-  --sidebar-accent: #6c757d; /* Muted gray sidebar accent */
-  --sidebar-accent-foreground: #ffffff; /* White sidebar accent text */
-  --sidebar-border: #e9ecef; /* Light sidebar border */
-  --sidebar-ring: rgba(0, 0, 0, 0.1); /* Subtle sidebar focus ring */
+  /* Updated color tokens to use blue as main brand color */
+  --background: #ffffff;
+  --foreground: #1a202c;
+  --card: #f7fafc;
+  --card-foreground: #2d3748;
+  --popover: #ffffff;
+  --popover-foreground: #1a202c;
+  --primary: #2563eb; /* Blue as main color */
+  --primary-foreground: #ffffff;
+  --secondary: #64748b;
+  --secondary-foreground: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #3b82f6; /* Blue accent */
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #ffffff;
+  --ring: rgba(37, 99, 235, 0.3); /* Blue focus ring */
+  --chart-1: #2563eb;
+  --chart-2: #3b82f6;
+  --chart-3: #60a5fa;
+  --chart-4: #93c5fd;
+  --chart-5: #dbeafe;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a202c;
+  --sidebar-primary: #f1f5f9;
+  --sidebar-primary-foreground: #2d3748;
+  --sidebar-accent: #3b82f6;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: rgba(37, 99, 235, 0.3);
+  --font-poppins: "Poppins", sans-serif; /* Added Poppins font */
 }
 
 .dark {
-  /* Updated dark mode tokens for minimal aesthetic */
-  --background: #000000; /* Pure black background */
-  --foreground: #ffffff; /* White text */
-  --card: #1a1a1a; /* Dark gray card background */
-  --card-foreground: #e9ecef; /* Light gray card text */
-  --popover: #1a1a1a; /* Dark popover background */
-  --popover-foreground: #ffffff; /* White popover text */
-  --primary: #ffffff; /* White for primary buttons in dark mode */
-  --primary-foreground: #000000; /* Black text on primary */
-  --secondary: #6c757d; /* Same muted gray secondary */
-  --secondary-foreground: #ffffff; /* White text on secondary */
-  --muted: #1a1a1a; /* Dark muted background */
-  --muted-foreground: #adb5bd; /* Light gray muted text */
-  --accent: #6c757d; /* Same muted gray accent */
-  --accent-foreground: #ffffff; /* White text on accent */
-  --destructive: #dc3545; /* Same red destructive */
-  --destructive-foreground: #ffffff; /* White text on destructive */
-  --border: #343a40; /* Dark border */
-  --input: #1a1a1a; /* Dark input background */
-  --ring: rgba(255, 255, 255, 0.1); /* Subtle white ring */
-  --chart-1: #ffffff; /* White chart color */
-  --chart-2: #e9ecef; /* Light gray chart color */
-  --chart-3: #adb5bd; /* Medium gray chart color */
-  --chart-4: #6c757d; /* Muted gray chart color */
-  --chart-5: #343a40; /* Dark gray chart color */
-  --sidebar: #000000; /* Black sidebar */
-  --sidebar-foreground: #ffffff; /* White sidebar text */
-  --sidebar-primary: #1a1a1a; /* Dark sidebar primary */
-  --sidebar-primary-foreground: #e9ecef; /* Light sidebar primary text */
-  --sidebar-accent: #6c757d; /* Muted gray sidebar accent */
-  --sidebar-accent-foreground: #ffffff; /* White sidebar accent text */
-  --sidebar-border: #343a40; /* Dark sidebar border */
-  --sidebar-ring: rgba(255, 255, 255, 0.1); /* Subtle sidebar ring */
+  /* Updated dark mode with blue accents */
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --card-foreground: #e2e8f0;
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
+  --primary: #3b82f6; /* Blue primary in dark mode */
+  --primary-foreground: #ffffff;
+  --secondary: #475569;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #2563eb; /* Blue accent in dark mode */
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #334155;
+  --input: #1e293b;
+  --ring: rgba(59, 130, 246, 0.3);
+  --chart-1: #3b82f6;
+  --chart-2: #60a5fa;
+  --chart-3: #93c5fd;
+  --chart-4: #dbeafe;
+  --chart-5: #eff6ff;
+  --sidebar: #0f172a;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #1e293b;
+  --sidebar-primary-foreground: #e2e8f0;
+  --sidebar-accent: #3b82f6;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #334155;
+  --sidebar-ring: rgba(59, 130, 246, 0.3);
 }
 
 @theme inline {
@@ -114,8 +115,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Updated fonts to match world.org clean aesthetic */
-  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+  /* Updated fonts to use Poppins */
+  --font-sans: var(--font-poppins), system-ui, -apple-system, sans-serif;
   --font-serif: "Manrope", Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
