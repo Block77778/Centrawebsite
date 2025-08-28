@@ -32,6 +32,7 @@ import {
 import PersistentCTA from "../../components/PersistentCTA"
 import Image from "next/image"
 import { useState, useEffect, useCallback } from "react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function CentraSocialPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -43,6 +44,10 @@ export default function CentraSocialPage() {
   const [notifications, setNotifications] = useState<string[]>([])
   const [showNotifications, setShowNotifications] = useState(false)
   const [lastUpdate, setLastUpdate] = useState(Date.now())
+  const [activeFilter, setActiveFilter] = useState("All")
+  const [followedUsers, setFollowedUsers] = useState<string[]>([])
+  const { toast } = useToast()
+
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -59,6 +64,7 @@ export default function CentraSocialPage() {
       comments: 8,
       shares: 3,
       tags: ["Economics", "Discussion"],
+      category: "Discussion",
       liked: false,
       commentsList: [
         {
@@ -94,6 +100,7 @@ export default function CentraSocialPage() {
       comments: 12,
       shares: 5,
       tags: ["Feature Request", "UX"],
+      category: "Ideas",
       liked: false,
       commentsList: [
         {
@@ -121,6 +128,7 @@ export default function CentraSocialPage() {
       comments: 15,
       shares: 8,
       tags: ["Project", "Open Source"],
+      category: "Announcements",
       liked: false,
       commentsList: [
         {
@@ -153,6 +161,7 @@ export default function CentraSocialPage() {
       content:
         "Looking at the charts, Centra has shown remarkable stability compared to other cryptocurrencies. The fixed supply model is really proving its worth!",
       tags: ["Analysis", "Market"],
+      category: "Discussion",
     },
     {
       user: "DeFi Sarah",
@@ -163,6 +172,7 @@ export default function CentraSocialPage() {
       content:
         "I've been working on a proposal for integrating Centra with major DeFi protocols. This could open up new opportunities for yield farming and liquidity provision.",
       tags: ["DeFi", "Proposal"],
+      category: "Ideas",
     },
     {
       user: "Blockchain Dev",
@@ -173,8 +183,37 @@ export default function CentraSocialPage() {
       content:
         "Just completed the security audit for the latest smart contract updates. Everything looks solid - no critical vulnerabilities found!",
       tags: ["Security", "Development"],
+      category: "Announcements",
     },
   ]
+
+  const handleFollowUser = (handle: string) => {
+    if (followedUsers.includes(handle)) {
+      setFollowedUsers(followedUsers.filter((user) => user !== handle))
+      toast({
+        title: "Unfollowed",
+        description: `You unfollowed ${handle}`,
+      })
+    } else {
+      setFollowedUsers([...followedUsers, handle])
+      toast({
+        title: "Following",
+        description: `You are now following ${handle}`,
+      })
+    }
+  }
+
+  const handleSidebarNavigation = (section: string) => {
+    toast({
+      title: `${section} Section`,
+      description: `${section} section would open here in a real application.`,
+    })
+  }
+
+  const filteredPosts = posts.filter((post) => {
+    if (activeFilter === "All") return true
+    return post.category === activeFilter
+  })
 
   const addRandomActivity = useCallback(() => {
     const activities = [
@@ -250,6 +289,7 @@ export default function CentraSocialPage() {
         comments: 0,
         shares: 0,
         tags: ["Discussion"],
+        category: "Discussion",
         liked: false,
         commentsList: [],
       }
@@ -392,10 +432,20 @@ export default function CentraSocialPage() {
 
             {/* Navigation Icons */}
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-primary"
+                onClick={() => (window.location.href = "/")}
+              >
                 <Home className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-primary"
+                onClick={() => handleSidebarNavigation("Explore")}
+              >
                 <Compass className="w-5 h-5" />
               </Button>
               <div className="relative">
@@ -431,7 +481,12 @@ export default function CentraSocialPage() {
                   </div>
                 )}
               </div>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-primary"
+                onClick={() => handleSidebarNavigation("Messages")}
+              >
                 <Mail className="w-5 h-5" />
               </Button>
               <Link href="/community/profile">
@@ -520,19 +575,35 @@ export default function CentraSocialPage() {
                 <h3 className="font-semibold text-foreground">Quick Links</h3>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-muted-foreground hover:text-primary"
+                  onClick={() => (window.location.href = "/")}
+                >
                   <Home className="w-4 h-4 mr-3" />
                   Home
                 </Button>
-                <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-muted-foreground hover:text-primary"
+                  onClick={() => handleSidebarNavigation("Explore")}
+                >
                   <Compass className="w-4 h-4 mr-3" />
                   Explore
                 </Button>
-                <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-muted-foreground hover:text-primary"
+                  onClick={() => setShowNotifications(!showNotifications)}
+                >
                   <Bell className="w-4 h-4 mr-3" />
                   Notifications
                 </Button>
-                <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-muted-foreground hover:text-primary"
+                  onClick={() => handleSidebarNavigation("Settings")}
+                >
                   <Settings className="w-4 h-4 mr-3" />
                   Settings
                 </Button>
@@ -560,8 +631,16 @@ export default function CentraSocialPage() {
                         <p className="text-xs text-muted-foreground">{user.handle}</p>
                       </div>
                     </div>
-                    <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                      Follow
+                    <Button
+                      size="sm"
+                      onClick={() => handleFollowUser(user.handle)}
+                      className={
+                        followedUsers.includes(user.handle)
+                          ? "bg-muted text-muted-foreground hover:bg-muted/80"
+                          : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                      }
+                    >
+                      {followedUsers.includes(user.handle) ? "Following" : "Follow"}
                     </Button>
                   </div>
                 ))}
@@ -633,7 +712,17 @@ export default function CentraSocialPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-primary"
+                          onClick={() =>
+                            toast({
+                              title: "Photo Upload",
+                              description: "Photo upload would work here in a real application.",
+                            })
+                          }
+                        >
                           <ImageIcon className="w-4 h-4 mr-1" />
                           Photo
                         </Button>
@@ -670,8 +759,9 @@ export default function CentraSocialPage() {
               {["All", "Discussion", "Ideas", "Questions", "Announcements"].map((tab, index) => (
                 <button
                   key={index}
+                  onClick={() => setActiveFilter(tab)}
                   className={`pb-2 px-1 transition-colors ${
-                    index === 0
+                    activeFilter === tab
                       ? "border-b-2 border-primary text-primary font-medium"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
@@ -683,8 +773,9 @@ export default function CentraSocialPage() {
 
             {/* Posts Feed */}
             <div className="space-y-6">
-              {posts.map((post) => (
+              {filteredPosts.map((post) => (
                 <Card key={post.id} className="hover:shadow-lg transition-shadow">
+                  {/* ... existing post content ... */}
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
