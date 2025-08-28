@@ -1,20 +1,13 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Manrope } from "next/font/google"
+import { Poppins } from "next/font/google"
 import "./globals.css"
 
-const geist = Geist({
+const poppins = Poppins({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-geist",
+  variable: "--font-poppins",
   weight: ["400", "500", "600", "700"],
-})
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-manrope",
-  weight: ["400", "500", "600"],
 })
 
 export const metadata: Metadata = {
@@ -68,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geist.variable} ${manrope.variable} antialiased`}>
+    <html lang="en" className={`${poppins.variable} antialiased`}>
       <body className="font-sans">{children}</body>
     </html>
   )
