@@ -1,8 +1,111 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
 import Link from "next/link"
 import PersistentCTA from "../../components/PersistentCTA"
 import Image from "next/image"
+import { useToast } from "@/hooks/use-toast"
 
 export default function BlogPage() {
+  const [activeCategory, setActiveCategory] = useState("All")
+  const [email, setEmail] = useState("")
+  const { toast } = useToast()
+
+  const handleCategoryFilter = (category: string) => {
+    setActiveCategory(category)
+    toast({
+      title: `Filter Applied`,
+      description: `Showing ${category === "All" ? "all" : category.toLowerCase()} articles.`,
+    })
+  }
+
+  const handleReadArticle = (title: string) => {
+    toast({
+      title: "Article",
+      description: `"${title}" would open here in a real application.`,
+    })
+  }
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address to subscribe.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    toast({
+      title: "Successfully subscribed!",
+      description: "Thank you for subscribing to Centra Insights newsletter.",
+    })
+    setEmail("")
+  }
+
+  const articles = [
+    {
+      title: "Centra vs Traditional Banking: A Technical Comparison",
+      excerpt: "Deep dive into the architectural differences between Centra and legacy financial systems.",
+      author: "Marcus Chen",
+      date: "3 days ago",
+      category: "Technology",
+      readTime: "8 min read",
+      image: "/blockchain-network.png",
+    },
+    {
+      title: "Policy Implications of Transparent Money",
+      excerpt: "How complete transaction transparency could reshape government fiscal policy and taxation.",
+      author: "Sarah Johnson",
+      date: "1 week ago",
+      category: "Policy",
+      readTime: "6 min read",
+      image: "/government-policy-abstract.png",
+    },
+    {
+      title: "Community Spotlight: Building on Centra",
+      excerpt: "Meet the developers and entrepreneurs creating innovative applications on the Centra network.",
+      author: "Alex Rivera",
+      date: "1 week ago",
+      category: "Community",
+      readTime: "4 min read",
+      image: "/developer-community.png",
+    },
+    {
+      title: "The Psychology of Money: Why Stability Matters",
+      excerpt: "Behavioral economics research on how monetary stability affects decision-making and well-being.",
+      author: "Dr. Lisa Park",
+      date: "2 weeks ago",
+      category: "Economy",
+      readTime: "7 min read",
+      image: "/psychology-of-money.png",
+    },
+    {
+      title: "Centra's Environmental Impact: A Sustainability Analysis",
+      excerpt: "Comprehensive study of Centra's energy consumption compared to traditional payment systems.",
+      author: "Green Tech Team",
+      date: "2 weeks ago",
+      category: "Technology",
+      readTime: "5 min read",
+      image: "/green-technology.png",
+    },
+    {
+      title: "Global Adoption Patterns: Centra Around the World",
+      excerpt: "Analysis of how different regions are adopting Centra and the cultural factors at play.",
+      author: "Research Team",
+      date: "3 weeks ago",
+      category: "Economy",
+      readTime: "9 min read",
+      image: "/world-map-data.png",
+    },
+  ]
+
+  const filteredArticles =
+    activeCategory === "All" ? articles : articles.filter((article) => article.category === activeCategory)
+
   return (
     <div className="min-h-screen bg-white">
       <PersistentCTA />
@@ -21,22 +124,22 @@ export default function BlogPage() {
               />
             </Link>
             <div className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
+              <Link href="/" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Home
               </Link>
-              <Link href="/team" className="text-gray-600 hover:text-gray-900">
+              <Link href="/team" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Team
               </Link>
-              <Link href="/developers" className="text-gray-600 hover:text-gray-900">
+              <Link href="/developers" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Developers
               </Link>
-              <Link href="/community" className="text-gray-600 hover:text-gray-900">
+              <Link href="/community" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Community
               </Link>
-              <Link href="/blog" className="text-gray-900 font-medium">
+              <Link href="/blog" className="text-cyan-600 font-medium">
                 Blog
               </Link>
-              <Link href="/faq" className="text-gray-600 hover:text-gray-900">
+              <Link href="/faq" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 FAQ
               </Link>
             </div>
@@ -64,8 +167,11 @@ export default function BlogPage() {
             {["All", "Economy", "Technology", "Policy", "Community"].map((category, index) => (
               <button
                 key={index}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  index === 0 ? "bg-cyan-600 text-white" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                onClick={() => handleCategoryFilter(category)}
+                className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                  activeCategory === category
+                    ? "bg-cyan-600 text-white"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 hover:scale-105"
                 }`}
               >
                 {category}
@@ -96,12 +202,12 @@ export default function BlogPage() {
                     <div className="text-sm text-gray-500">Chief Economist • 5 min read</div>
                   </div>
                 </div>
-                <Link
-                  href="#"
-                  className="bg-cyan-600 text-white px-6 py-3 rounded-lg hover:bg-cyan-700 transition-colors inline-block"
+                <button
+                  onClick={() => handleReadArticle("The End of Inflation: How Fixed Supply Changes Everything")}
+                  className="bg-cyan-600 text-white px-6 py-3 rounded-lg hover:bg-cyan-700 hover:scale-105 transition-all duration-300 inline-block"
                 >
                   Read Article
-                </Link>
+                </button>
               </div>
               <div>
                 <img src="/economic-chart-inflation.png" alt="Featured article" className="w-full rounded-xl" />
@@ -111,67 +217,10 @@ export default function BlogPage() {
 
           {/* Blog Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Centra vs Traditional Banking: A Technical Comparison",
-                excerpt: "Deep dive into the architectural differences between Centra and legacy financial systems.",
-                author: "Marcus Chen",
-                date: "3 days ago",
-                category: "Technology",
-                readTime: "8 min read",
-                image: "/blockchain-network.png",
-              },
-              {
-                title: "Policy Implications of Transparent Money",
-                excerpt: "How complete transaction transparency could reshape government fiscal policy and taxation.",
-                author: "Sarah Johnson",
-                date: "1 week ago",
-                category: "Policy",
-                readTime: "6 min read",
-                image: "/government-policy-abstract.png",
-              },
-              {
-                title: "Community Spotlight: Building on Centra",
-                excerpt:
-                  "Meet the developers and entrepreneurs creating innovative applications on the Centra network.",
-                author: "Alex Rivera",
-                date: "1 week ago",
-                category: "Community",
-                readTime: "4 min read",
-                image: "/developer-community.png",
-              },
-              {
-                title: "The Psychology of Money: Why Stability Matters",
-                excerpt:
-                  "Behavioral economics research on how monetary stability affects decision-making and well-being.",
-                author: "Dr. Lisa Park",
-                date: "2 weeks ago",
-                category: "Economy",
-                readTime: "7 min read",
-                image: "/psychology-of-money.png",
-              },
-              {
-                title: "Centra's Environmental Impact: A Sustainability Analysis",
-                excerpt: "Comprehensive study of Centra's energy consumption compared to traditional payment systems.",
-                author: "Green Tech Team",
-                date: "2 weeks ago",
-                category: "Technology",
-                readTime: "5 min read",
-                image: "/green-technology.png",
-              },
-              {
-                title: "Global Adoption Patterns: Centra Around the World",
-                excerpt: "Analysis of how different regions are adopting Centra and the cultural factors at play.",
-                author: "Research Team",
-                date: "3 weeks ago",
-                category: "Economy",
-                readTime: "9 min read",
-                image: "/world-map-data.png",
-              },
-            ].map((article, index) => (
+            {filteredArticles.map((article, index) => (
               <article
                 key={index}
-                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
+                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300"
               >
                 <img
                   src={article.image || "/placeholder.svg"}
@@ -203,14 +252,24 @@ export default function BlogPage() {
                       <span className="mx-1">•</span>
                       <span>{article.date}</span>
                     </div>
-                    <Link href="#" className="text-cyan-600 hover:text-cyan-700 text-sm font-medium">
+                    <button
+                      onClick={() => handleReadArticle(article.title)}
+                      className="text-cyan-600 hover:text-cyan-700 text-sm font-medium transition-colors duration-200"
+                    >
                       Read →
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </article>
             ))}
           </div>
+
+          {/* Show message when no articles match filter */}
+          {filteredArticles.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No articles found in the {activeCategory} category.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -221,9 +280,19 @@ export default function BlogPage() {
           <p className="text-xl text-gray-300 mb-8">
             Get the latest insights on economics, technology, and the future of money delivered to your inbox.
           </p>
-          <form className="flex gap-4 max-w-md mx-auto">
-            <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-3 rounded-lg text-gray-900" />
-            <button className="bg-cyan-600 text-white px-8 py-3 rounded-lg hover:bg-cyan-700 transition-colors">
+          <form className="flex gap-4 max-w-md mx-auto" onSubmit={handleNewsletterSubmit}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              required
+            />
+            <button
+              type="submit"
+              className="bg-cyan-600 text-white px-8 py-3 rounded-lg hover:bg-cyan-700 hover:scale-105 transition-all duration-300"
+            >
               Subscribe
             </button>
           </form>
