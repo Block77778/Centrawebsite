@@ -3,8 +3,22 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
+import { useToast } from "@/hooks/use-toast"
 
 export default function TeamPage() {
+  const { toast } = useToast()
+
+  const handleGetStarted = () => {
+    window.location.href = "/#newsletter-section"
+  }
+
+  const handleLinkedInClick = (name: string) => {
+    toast({
+      title: "LinkedIn Profile",
+      description: `${name}'s LinkedIn profile would open here in a real application.`,
+    })
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border bg-background">
@@ -21,31 +35,42 @@ export default function TeamPage() {
                 />
               </div>
               <div className="hidden md:flex items-center space-x-6 text-sm">
-                <a href="/" className="text-foreground hover:text-muted-foreground">
+                <a href="/" className="text-foreground hover:text-cyan-600 transition-colors duration-200">
                   Home
                 </a>
-                <a href="#" className="text-foreground hover:text-muted-foreground">
+                <a
+                  href="/#newsletter-section"
+                  className="text-foreground hover:text-cyan-600 transition-colors duration-200"
+                >
                   Buy Centra
                 </a>
-                <a href="/team" className="text-foreground hover:text-muted-foreground font-medium">
+                <a
+                  href="/team"
+                  className="text-foreground hover:text-cyan-600 font-medium transition-colors duration-200"
+                >
                   Meet the Team
                 </a>
-                <a href="#" className="text-foreground hover:text-muted-foreground">
+                <a href="/developers" className="text-foreground hover:text-cyan-600 transition-colors duration-200">
                   Developer Hub
                 </a>
-                <a href="#" className="text-foreground hover:text-muted-foreground">
+                <a href="/community" className="text-foreground hover:text-cyan-600 transition-colors duration-200">
                   Community
                 </a>
-                <a href="#" className="text-foreground hover:text-muted-foreground">
+                <a href="/faq" className="text-foreground hover:text-cyan-600 transition-colors duration-200">
                   FAQs
                 </a>
-                <a href="#" className="text-foreground hover:text-muted-foreground">
+                <a href="/blog" className="text-foreground hover:text-cyan-600 transition-colors duration-200">
                   Blog
                 </a>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" className="text-sm bg-transparent">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleGetStarted}
+                className="text-sm bg-transparent hover:bg-cyan-50 hover:border-cyan-300 transition-all duration-200"
+              >
                 Get Started
               </Button>
             </div>
@@ -69,7 +94,7 @@ export default function TeamPage() {
           <div className="mb-20">
             <h2 className="text-2xl font-medium text-foreground mb-8 text-center">Leadership Team</h2>
             <div className="grid md:grid-cols-3 gap-8">
-              <Card className="border border-border bg-background hover:shadow-sm transition-shadow text-center p-8">
+              <Card className="border border-border bg-background hover:shadow-xl hover:scale-105 transition-all duration-300 text-center p-8">
                 <div className="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-medium">
                   AS
                 </div>
@@ -79,12 +104,17 @@ export default function TeamPage() {
                   Former Goldman Sachs VP with 15 years in fintech. Led digital transformation initiatives at three
                   Fortune 500 companies.
                 </CardDescription>
-                <Button variant="outline" size="sm" className="bg-transparent">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleLinkedInClick("Alex Smith")}
+                  className="bg-transparent hover:bg-cyan-50 hover:border-cyan-300 transition-all duration-200"
+                >
                   LinkedIn Profile
                 </Button>
               </Card>
 
-              <Card className="border border-border bg-background hover:shadow-sm transition-shadow text-center p-8">
+              <Card className="border border-border bg-background hover:shadow-xl hover:scale-105 transition-all duration-300 text-center p-8">
                 <div className="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-medium">
                   MJ
                 </div>
@@ -94,12 +124,17 @@ export default function TeamPage() {
                   Former Ethereum core developer. PhD in Cryptography from MIT. Built scalable blockchain infrastructure
                   for 10M+ users.
                 </CardDescription>
-                <Button variant="outline" size="sm" className="bg-transparent">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleLinkedInClick("Maria Johnson")}
+                  className="bg-transparent hover:bg-cyan-50 hover:border-cyan-300 transition-all duration-200"
+                >
                   LinkedIn Profile
                 </Button>
               </Card>
 
-              <Card className="border border-border bg-background hover:shadow-sm transition-shadow text-center p-8">
+              <Card className="border border-border bg-background hover:shadow-xl hover:scale-105 transition-all duration-300 text-center p-8">
                 <div className="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-medium">
                   DL
                 </div>
@@ -109,7 +144,12 @@ export default function TeamPage() {
                   Former Federal Reserve economist. Published researcher on monetary policy and digital currencies.
                   Harvard Economics PhD.
                 </CardDescription>
-                <Button variant="outline" size="sm" className="bg-transparent">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleLinkedInClick("David Lee")}
+                  className="bg-transparent hover:bg-cyan-50 hover:border-cyan-300 transition-all duration-200"
+                >
                   LinkedIn Profile
                 </Button>
               </Card>
