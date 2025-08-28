@@ -1,8 +1,52 @@
+"use client"
+
 import Link from "next/link"
 import PersistentCTA from "../../components/PersistentCTA"
 import Image from "next/image"
+import { useToast } from "@/hooks/use-toast"
 
 export default function DevelopersPage() {
+  const { toast } = useToast()
+
+  const handleGetStarted = () => {
+    window.location.href = "/#newsletter-section"
+  }
+
+  const handleViewDocs = (docType: string) => {
+    toast({
+      title: `${docType} Documentation`,
+      description: `${docType} documentation would open here in a real application.`,
+    })
+  }
+
+  const handleDownload = (sdkName: string) => {
+    toast({
+      title: `${sdkName} Download`,
+      description: `${sdkName} download would start here in a real application.`,
+    })
+  }
+
+  const handleTutorial = (tutorialName: string) => {
+    toast({
+      title: `${tutorialName} Tutorial`,
+      description: `${tutorialName} tutorial would open here in a real application.`,
+    })
+  }
+
+  const handleGitHub = () => {
+    toast({
+      title: "GitHub Repository",
+      description: "GitHub repository would open here in a real application.",
+    })
+  }
+
+  const handleContribution = () => {
+    toast({
+      title: "Contribution Guidelines",
+      description: "Contribution guidelines would open here in a real application.",
+    })
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <PersistentCTA />
@@ -21,22 +65,22 @@ export default function DevelopersPage() {
               />
             </Link>
             <div className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
+              <Link href="/" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Home
               </Link>
-              <Link href="/team" className="text-gray-600 hover:text-gray-900">
+              <Link href="/team" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Team
               </Link>
-              <Link href="/developers" className="text-gray-900 font-medium">
+              <Link href="/developers" className="text-cyan-600 font-medium">
                 Developers
               </Link>
-              <Link href="/community" className="text-gray-600 hover:text-gray-900">
+              <Link href="/community" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Community
               </Link>
-              <Link href="/blog" className="text-gray-600 hover:text-gray-900">
+              <Link href="/blog" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Blog
               </Link>
-              <Link href="/faq" className="text-gray-600 hover:text-gray-900">
+              <Link href="/faq" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 FAQ
               </Link>
             </div>
@@ -55,10 +99,16 @@ export default function DevelopersPage() {
             developers creating transparent, stable financial solutions.
           </p>
           <div className="flex gap-4 justify-center">
-            <button className="bg-cyan-600 text-white px-8 py-3 rounded-lg hover:bg-cyan-700 transition-colors">
+            <button
+              onClick={handleGetStarted}
+              className="bg-cyan-600 text-white px-8 py-3 rounded-lg hover:bg-cyan-700 hover:scale-105 transition-all duration-300"
+            >
               Get Started
             </button>
-            <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 transition-colors">
+            <button
+              onClick={() => handleViewDocs("API")}
+              className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 hover:scale-105 transition-all duration-300"
+            >
               View Documentation
             </button>
           </div>
@@ -70,7 +120,7 @@ export default function DevelopersPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">API Documentation</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg hover:scale-105 transition-all duration-300">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -85,11 +135,14 @@ export default function DevelopersPage() {
               <p className="text-gray-600 mb-6">
                 Simple HTTP endpoints for wallet operations, transactions, and account management.
               </p>
-              <Link href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+              <button
+                onClick={() => handleViewDocs("REST API")}
+                className="text-cyan-600 hover:text-cyan-700 font-medium transition-colors duration-200"
+              >
                 View REST Docs →
-              </Link>
+              </button>
             </div>
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg hover:scale-105 transition-all duration-300">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -99,9 +152,12 @@ export default function DevelopersPage() {
               <p className="text-gray-600 mb-6">
                 Flexible query language for efficient data fetching and real-time subscriptions.
               </p>
-              <Link href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+              <button
+                onClick={() => handleViewDocs("GraphQL API")}
+                className="text-cyan-600 hover:text-cyan-700 font-medium transition-colors duration-200"
+              >
                 View GraphQL Docs →
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -123,12 +179,15 @@ export default function DevelopersPage() {
             ].map((sdk, index) => (
               <div
                 key={index}
-                className="bg-white border border-gray-200 rounded-xl p-8 text-center hover:shadow-lg transition-shadow"
+                className="bg-white border border-gray-200 rounded-xl p-8 text-center hover:shadow-lg hover:scale-105 transition-all duration-300"
               >
                 <div className="text-4xl mb-4">{sdk.icon}</div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">{sdk.name}</h3>
                 <p className="text-gray-600 mb-6">{sdk.description}</p>
-                <button className="bg-cyan-600 text-white px-6 py-2 rounded-lg hover:bg-cyan-700 transition-colors">
+                <button
+                  onClick={() => handleDownload(sdk.name)}
+                  className="bg-cyan-600 text-white px-6 py-2 rounded-lg hover:bg-cyan-700 hover:scale-105 transition-all duration-300"
+                >
                   Download
                 </button>
               </div>
@@ -152,7 +211,7 @@ export default function DevelopersPage() {
             ].map((project, index) => (
               <div
                 key={index}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
+                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-300"
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{project.title}</h3>
                 <div className="flex gap-2 mb-4">
@@ -169,9 +228,12 @@ export default function DevelopersPage() {
                   </span>
                   <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">{project.time}</span>
                 </div>
-                <Link href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+                <button
+                  onClick={() => handleTutorial(project.title)}
+                  className="text-cyan-600 hover:text-cyan-700 font-medium transition-colors duration-200"
+                >
                   Start Tutorial →
-                </Link>
+                </button>
               </div>
             ))}
           </div>
@@ -186,15 +248,18 @@ export default function DevelopersPage() {
             Centra is built in the open. Contribute to our codebase, report issues, and help shape the future of money.
           </p>
           <div className="flex gap-4 justify-center mb-12">
-            <Link href="#" className="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">
+            <button
+              onClick={handleGitHub}
+              className="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300"
+            >
               View on GitHub
-            </Link>
-            <Link
-              href="#"
-              className="border border-gray-600 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+            </button>
+            <button
+              onClick={handleContribution}
+              className="border border-gray-600 text-white px-8 py-3 rounded-lg hover:bg-gray-800 hover:scale-105 transition-all duration-300"
             >
               Contribution Guidelines
-            </Link>
+            </button>
           </div>
 
           {/* Developer Newsfeed */}
