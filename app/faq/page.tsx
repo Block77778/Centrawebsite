@@ -3,12 +3,21 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import PersistentCTA from "../../components/PersistentCTA"
+import { useToast } from "@/hooks/use-toast"
 
 export default function FAQPage() {
   const [openSection, setOpenSection] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section)
+  }
+
+  const handleContactSupport = () => {
+    toast({
+      title: "Contact Support",
+      description: "Support contact form would open here in a real application.",
+    })
   }
 
   const faqSections = {
@@ -117,22 +126,22 @@ export default function FAQPage() {
               />
             </Link>
             <div className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
+              <Link href="/" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Home
               </Link>
-              <Link href="/team" className="text-gray-600 hover:text-gray-900">
+              <Link href="/team" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Team
               </Link>
-              <Link href="/developers" className="text-gray-600 hover:text-gray-900">
+              <Link href="/developers" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Developers
               </Link>
-              <Link href="/community" className="text-gray-600 hover:text-gray-900">
+              <Link href="/community" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Community
               </Link>
-              <Link href="/blog" className="text-gray-600 hover:text-gray-900">
+              <Link href="/blog" className="text-gray-600 hover:text-cyan-600 transition-colors duration-200">
                 Blog
               </Link>
-              <Link href="/faq" className="text-gray-900 font-medium">
+              <Link href="/faq" className="text-cyan-600 font-medium">
                 FAQ
               </Link>
             </div>
@@ -157,7 +166,10 @@ export default function FAQPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-8">
             {Object.entries(faqSections).map(([sectionKey, questions]) => (
-              <div key={sectionKey} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div
+                key={sectionKey}
+                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              >
                 <button
                   onClick={() => toggleSection(sectionKey)}
                   className="w-full px-8 py-6 text-left bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center"
@@ -209,16 +221,16 @@ export default function FAQPage() {
           <div className="flex gap-4 justify-center">
             <Link
               href="/community"
-              className="bg-cyan-600 text-white px-8 py-3 rounded-lg hover:bg-cyan-700 transition-colors"
+              className="bg-cyan-600 text-white px-8 py-3 rounded-lg hover:bg-cyan-700 hover:scale-105 transition-all duration-300"
             >
               Join Community
             </Link>
-            <Link
-              href="#"
-              className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 transition-colors"
+            <button
+              onClick={handleContactSupport}
+              className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 hover:scale-105 transition-all duration-300"
             >
               Contact Support
-            </Link>
+            </button>
           </div>
         </div>
       </section>
