@@ -25,10 +25,10 @@
   --input: #ffffff;
   --ring: rgba(28, 96, 255, 0.3); /* Blue focus ring */
   --chart-1: #1c60ff;
-  --chart-2: #4d7fff;
-  --chart-3: #7f9fff;
-  --chart-4: #b2bfff;
-  --chart-5: #e5efff;
+  --chart-2: #1c60ff;
+  --chart-3: #1c60ff;
+  --chart-4: #1c60ff;
+  --chart-5: #1c60ff;
   --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #1a202c;
@@ -63,10 +63,10 @@
   --input: #1e293b;
   --ring: rgba(28, 96, 255, 0.3);
   --chart-1: #1c60ff;
-  --chart-2: #4d7fff;
-  --chart-3: #7f9fff;
-  --chart-4: #b2bfff;
-  --chart-5: #e5efff;
+  --chart-2: #1c60ff;
+  --chart-3: #1c60ff;
+  --chart-4: #1c60ff;
+  --chart-5: #1c60ff;
   --sidebar: #0f172a;
   --sidebar-foreground: #f8fafc;
   --sidebar-primary: #1e293b;
@@ -117,8 +117,8 @@
 
   /* Updated fonts to use Poppins */
   --font-sans: var(--font-poppins), system-ui, -apple-system, sans-serif;
-  --font-serif: "Manrope", Georgia, serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-serif: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-poppins), system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
