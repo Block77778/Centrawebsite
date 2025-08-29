@@ -22,10 +22,10 @@ export const metadata: Metadata = {
   robots: "index, follow",
   icons: {
     icon: [
-      { url: "/centra-icon.png", sizes: "32x32", type: "image/png" },
-      { url: "/centra-badge.png", sizes: "192x192", type: "image/png" },
+      { url: "/centra-icon.png", sizes: "48x48", type: "image/png" },
+      { url: "/centra-badge.png", sizes: "256x256", type: "image/png" },
     ],
-    apple: [{ url: "/centra-badge.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/centra-badge.png", sizes: "256x256", type: "image/png" }],
     shortcut: "/centra-icon.png",
   },
   openGraph: {
