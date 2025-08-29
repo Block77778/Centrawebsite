@@ -11,33 +11,33 @@
   --card-foreground: #2d3748;
   --popover: #ffffff;
   --popover-foreground: #1a202c;
-  --primary: #2563eb; /* Blue as main color */
+  --primary: #1c60ff; /* Blue as main color */
   --primary-foreground: #ffffff;
   --secondary: #64748b;
   --secondary-foreground: #ffffff;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
-  --accent: #3b82f6; /* Blue accent */
+  --accent: #1c60ff; /* Blue accent */
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --border: #e2e8f0;
   --input: #ffffff;
-  --ring: rgba(37, 99, 235, 0.3); /* Blue focus ring */
-  --chart-1: #2563eb;
-  --chart-2: #3b82f6;
-  --chart-3: #60a5fa;
-  --chart-4: #93c5fd;
-  --chart-5: #dbeafe;
+  --ring: rgba(28, 96, 255, 0.3); /* Blue focus ring */
+  --chart-1: #1c60ff;
+  --chart-2: #4d7fff;
+  --chart-3: #7f9fff;
+  --chart-4: #b2bfff;
+  --chart-5: #e5efff;
   --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #1a202c;
   --sidebar-primary: #f1f5f9;
   --sidebar-primary-foreground: #2d3748;
-  --sidebar-accent: #3b82f6;
+  --sidebar-accent: #1c60ff;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #e2e8f0;
-  --sidebar-ring: rgba(37, 99, 235, 0.3);
+  --sidebar-ring: rgba(28, 96, 255, 0.3);
   --font-poppins: "Poppins", sans-serif; /* Added Poppins font */
 }
 
@@ -49,32 +49,32 @@
   --card-foreground: #e2e8f0;
   --popover: #1e293b;
   --popover-foreground: #f8fafc;
-  --primary: #3b82f6; /* Blue primary in dark mode */
+  --primary: #1c60ff; /* Blue primary in dark mode */
   --primary-foreground: #ffffff;
   --secondary: #475569;
   --secondary-foreground: #f8fafc;
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
-  --accent: #2563eb; /* Blue accent in dark mode */
+  --accent: #1c60ff; /* Blue accent in dark mode */
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #334155;
   --input: #1e293b;
-  --ring: rgba(59, 130, 246, 0.3);
-  --chart-1: #3b82f6;
-  --chart-2: #60a5fa;
-  --chart-3: #93c5fd;
-  --chart-4: #dbeafe;
-  --chart-5: #eff6ff;
+  --ring: rgba(28, 96, 255, 0.3);
+  --chart-1: #1c60ff;
+  --chart-2: #4d7fff;
+  --chart-3: #7f9fff;
+  --chart-4: #b2bfff;
+  --chart-5: #e5efff;
   --sidebar: #0f172a;
   --sidebar-foreground: #f8fafc;
   --sidebar-primary: #1e293b;
   --sidebar-primary-foreground: #e2e8f0;
-  --sidebar-accent: #3b82f6;
+  --sidebar-accent: #1c60ff;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #334155;
-  --sidebar-ring: rgba(59, 130, 246, 0.3);
+  --sidebar-ring: rgba(28, 96, 255, 0.3);
 }
 
 @theme inline {
