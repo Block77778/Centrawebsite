@@ -22,11 +22,12 @@ export const metadata: Metadata = {
   robots: "index, follow",
   icons: {
     icon: [
-      { url: "/centra-icon.png", sizes: "48x48", type: "image/png" },
-      { url: "/centra-badge.png", sizes: "256x256", type: "image/png" },
+      { url: "/Centra-badge.png", sizes: "64x64", type: "image/png" },
+      { url: "/Centra-badge.png", sizes: "128x128", type: "image/png" },
+      { url: "/Centra-badge.png", sizes: "256x256", type: "image/png" },
     ],
-    apple: [{ url: "/centra-badge.png", sizes: "256x256", type: "image/png" }],
-    shortcut: "/centra-icon.png",
+    apple: [{ url: "/Centra-badge.png", sizes: "256x256", type: "image/png" }],
+    shortcut: "/Centra-badge.png",
   },
   openGraph: {
     title: "Centra - The Future Beyond Fiat",
