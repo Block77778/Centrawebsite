@@ -22,12 +22,16 @@ export const metadata: Metadata = {
   robots: "index, follow",
   icons: {
     icon: [
-      { url: "/Centra-badge.png", sizes: "64x64", type: "image/png" },
-      { url: "/Centra-badge.png", sizes: "128x128", type: "image/png" },
-      { url: "/Centra-badge.png", sizes: "256x256", type: "image/png" },
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/Centra-badge.png", sizes: "96x96", type: "image/png" },
+      { url: "/Centra-badge.png", sizes: "192x192", type: "image/png" },
+      { url: "/Centra-badge.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/Centra-badge.png", sizes: "256x256", type: "image/png" }],
-    shortcut: "/Centra-badge.png",
+    apple: [
+      { url: "/Centra-badge.png", sizes: "180x180", type: "image/png" },
+      { url: "/Centra-badge.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
   },
   openGraph: {
     title: "Centra - The Future Beyond Fiat",
