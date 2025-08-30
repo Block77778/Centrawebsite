@@ -308,131 +308,147 @@ export default function CentraHomepage() {
         </div>
       </section>
 
-      <section className="py-32 px-6 bg-gradient-to-b from-background to-muted/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-center">
+      <section className="py-0 bg-gradient-to-b from-background to-muted/20">
+        <div className="hidden lg:block w-full">
+          <div className="w-full space-y-0">
             <Image
-              src="/centra-history-timeline.png"
-              alt="The History of Money Timeline - From Barter System (10,000 BCE) to Centra (Est 2025)"
-              width={800}
-              height={2000}
-              className="max-w-full h-auto rounded-lg shadow-2xl"
+              src="/history-desktop-1.png"
+              alt="The History of Money - Introduction"
+              width={1920}
+              height={1080}
+              className="w-full h-auto block"
+              priority
+            />
+            <Image
+              src="/history-desktop-2.png"
+              alt="The History of Money - Timeline from Barter System to Cryptocurrency"
+              width={1920}
+              height={1080}
+              className="w-full h-auto block"
+              priority
+            />
+            <Image
+              src="/history-desktop-3.png"
+              alt="The History of Money - Centra 2025"
+              width={1920}
+              height={1080}
+              className="w-full h-auto block"
               priority
             />
           </div>
+        </div>
 
-          <div className="mt-32">
-            <div className="text-center mb-16">
-              <h3 className="text-4xl md:text-5xl font-medium text-foreground mb-6">The Financial Revolution</h3>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Compare the limitations of traditional fiat currency with Centra's innovative solutions for a better
-                financial future.
-              </p>
-            </div>
+        <div className="max-w-6xl mx-auto px-6 pt-32">
+          <div className="text-center mb-16">
+            <h3 className="text-4xl md:text-5xl font-medium text-foreground mb-6">The Financial Revolution</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Compare the limitations of traditional fiat currency with Centra's innovative solutions for a better
+              financial future.
+            </p>
+          </div>
 
-            <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-              {/* Fiat Problems Card */}
-              <Card className="border border-border bg-background hover:shadow-xl hover:scale-105 transition-all duration-300 p-8">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-muted to-muted/80 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">🏦</span>
-                  </div>
-                  <div>
-                    <h4 className="text-2xl font-medium text-foreground">Fiat Currency Problems</h4>
-                    <p className="text-muted-foreground">Current system limitations</p>
-                  </div>
+          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Fiat Problems Card */}
+            <Card className="border border-border bg-background hover:shadow-xl hover:scale-105 transition-all duration-300 p-8">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-muted to-muted/80 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🏦</span>
                 </div>
+                <div>
+                  <h4 className="text-2xl font-medium text-foreground">Fiat Currency Problems</h4>
+                  <p className="text-muted-foreground">Current system limitations</p>
+                </div>
+              </div>
 
-                <div className="space-y-6">
-                  {[
-                    {
-                      title: "Inflation erodes purchasing power over time",
-                      description: "Central banks print unlimited money, devaluing your savings",
-                    },
-                    {
-                      title: "Central bank manipulation and control",
-                      description: "Monetary policy serves institutions, not people",
-                    },
-                    {
-                      title: "Lack of transparency in monetary policy",
-                      description: "Hidden operations and backroom financial deals",
-                    },
-                    {
-                      title: "Unequal access to financial systems",
-                      description: "Billions excluded from basic financial services",
-                    },
-                  ].map((problem, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full mt-3 flex-shrink-0" />
-                      <div>
-                        <p className="text-foreground font-medium mb-1">{problem.title}</p>
-                        <p className="text-muted-foreground text-sm">{problem.description}</p>
-                      </div>
+              <div className="space-y-6">
+                {[
+                  {
+                    title: "Inflation erodes purchasing power over time",
+                    description: "Central banks print unlimited money, devaluing your savings",
+                  },
+                  {
+                    title: "Central bank manipulation and control",
+                    description: "Monetary policy serves institutions, not people",
+                  },
+                  {
+                    title: "Lack of transparency in monetary policy",
+                    description: "Hidden operations and backroom financial deals",
+                  },
+                  {
+                    title: "Unequal access to financial systems",
+                    description: "Billions excluded from basic financial services",
+                  },
+                ].map((problem, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full mt-3 flex-shrink-0" />
+                    <div>
+                      <p className="text-foreground font-medium mb-1">{problem.title}</p>
+                      <p className="text-muted-foreground text-sm">{problem.description}</p>
                     </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Centra Solutions Card */}
-              <Card className="border border-border bg-gradient-to-br from-cyan-50/50 to-blue-50/50 hover:shadow-xl hover:scale-105 transition-all duration-300 p-8">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center">
-                    <Image
-                      src="/centra-icon.png"
-                      alt="Centra"
-                      width={56}
-                      height={56}
-                      className="hover:scale-110 transition-transform duration-200"
-                    />
                   </div>
-                  <div>
-                    <h4 className="text-2xl font-medium text-cyan-600">Centra Solutions</h4>
-                    <p className="text-cyan-600/80">Revolutionary improvements</p>
-                  </div>
-                </div>
+                ))}
+              </div>
+            </Card>
 
-                <div className="space-y-6">
-                  {[
-                    {
-                      title: "Fixed supply prevents inflation and devaluation",
-                      description: "Your wealth is preserved with mathematical certainty",
-                    },
-                    {
-                      title: "Decentralized governance by the community",
-                      description: "Democratic decision-making puts power in people's hands",
-                    },
-                    {
-                      title: "Complete transparency in all transactions",
-                      description: "Every operation is publicly verifiable on the blockchain",
-                    },
-                    {
-                      title: "Equal access for everyone, everywhere",
-                      description: "No barriers, no discrimination, universal financial inclusion",
-                    },
-                  ].map((solution, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-cyan-600 rounded-full mt-3 flex-shrink-0" />
-                      <div>
-                        <p className="text-cyan-600 font-medium mb-1">{solution.title}</p>
-                        <p className="text-cyan-600/80 text-sm">{solution.description}</p>
-                      </div>
+            {/* Centra Solutions Card */}
+            <Card className="border border-border bg-gradient-to-br from-cyan-50/50 to-blue-50/50 hover:shadow-xl hover:scale-105 transition-all duration-300 p-8">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center">
+                  <Image
+                    src="/centra-icon.png"
+                    alt="Centra"
+                    width={56}
+                    height={56}
+                    className="hover:scale-110 transition-transform duration-200"
+                  />
+                </div>
+                <div>
+                  <h4 className="text-2xl font-medium text-cyan-600">Centra Solutions</h4>
+                  <p className="text-cyan-600/80">Revolutionary improvements</p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {[
+                  {
+                    title: "Fixed supply prevents inflation and devaluation",
+                    description: "Your wealth is preserved with mathematical certainty",
+                  },
+                  {
+                    title: "Decentralized governance by the community",
+                    description: "Democratic decision-making puts power in people's hands",
+                  },
+                  {
+                    title: "Complete transparency in all transactions",
+                    description: "Every operation is publicly verifiable on the blockchain",
+                  },
+                  {
+                    title: "Equal access for everyone, everywhere",
+                    description: "No barriers, no discrimination, universal financial inclusion",
+                  },
+                ].map((solution, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-cyan-600 rounded-full mt-3 flex-shrink-0" />
+                    <div>
+                      <p className="text-cyan-600 font-medium mb-1">{solution.title}</p>
+                      <p className="text-cyan-600/80 text-sm">{solution.description}</p>
                     </div>
-                  ))}
-                </div>
-              </Card>
-            </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
 
-            {/* Simplified call to action */}
-            <div className="text-center mt-12">
-              <Button
-                size="lg"
-                onClick={scrollToNewsletter}
-                className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-4 text-lg font-medium hover:scale-105 transition-all duration-300 shadow-lg"
-              >
-                Join the Financial Revolution
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
+          {/* Simplified call to action */}
+          <div className="text-center mt-12">
+            <Button
+              size="lg"
+              onClick={scrollToNewsletter}
+              className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-4 text-lg font-medium hover:scale-105 transition-all duration-300 shadow-lg"
+            >
+              Join the Financial Revolution
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           </div>
         </div>
       </section>
