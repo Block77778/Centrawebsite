@@ -338,6 +338,59 @@ export default function CentraHomepage() {
           </div>
         </div>
 
+        <div className="lg:hidden w-full">
+          <div className="w-full space-y-0">
+            <Image
+              src="/history-mobile-1.png"
+              alt="The History of Money - Introduction"
+              width={375}
+              height={667}
+              className="w-full h-auto block"
+              priority
+            />
+            <Image
+              src="/history-mobile-2.png"
+              alt="The History of Money - Barter System and Precious Metals"
+              width={375}
+              height={667}
+              className="w-full h-auto block"
+              priority
+            />
+            <Image
+              src="/history-mobile-3.png"
+              alt="The History of Money - Coinage and Paper Money"
+              width={375}
+              height={667}
+              className="w-full h-auto block"
+              priority
+            />
+            <Image
+              src="/history-mobile-4.png"
+              alt="The History of Money - Gold Standard and Fiat Currency"
+              width={375}
+              height={667}
+              className="w-full h-auto block"
+              priority
+            />
+            <Image
+              src="/history-mobile-5.png"
+              alt="The History of Money - Cryptocurrency and Centra"
+              width={375}
+              height={667}
+              className="w-full h-auto block"
+              priority
+            />
+            <Image
+              src="/history-mobile-6.png"
+              alt="The History of Money - Centra 2025 Mission"
+              width={375}
+              height={667}
+              className="w-full h-auto block"
+              priority
+            />
+          </div>
+        </div>
+
         <div className="max-w-6xl mx-auto px-6 pt-32">
           <div className="text-center mb-16">
             <h3 className="text-4xl md:text-5xl font-medium text-foreground mb-6">The Financial Revolution</h3>
