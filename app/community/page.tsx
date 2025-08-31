@@ -1,5 +1,7 @@
 "use client"
 
+import { useCallback } from "react"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,19 +33,42 @@ import {
 } from "lucide-react"
 import PersistentCTA from "../../components/PersistentCTA"
 import Image from "next/image"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
+import { useRealtimePosts, useRealtimeComments } from "@/hooks/use-realtime"
+import { createClient } from "@/lib/supabase/client"
 
 export default function CentraSocialPage() {
+  const { posts: realtimePosts, loading: postsLoading, refetch: refetchPosts } = useRealtimePosts()
+  const [user, setUser] = useState<any>(null)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    getUser()
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [newPost, setNewPost] = useState("")
   const [newPostTitle, setNewPostTitle] = useState("")
   const [isCreatingPost, setIsCreatingPost] = useState(false)
-  const [showComments, setShowComments] = useState<{ [key: number]: boolean }>({})
-  const [newComment, setNewComment] = useState<{ [key: number]: string }>({})
+  const [showComments, setShowComments] = useState<{ [key: string]: boolean }>({})
+  const [newComment, setNewComment] = useState<{ [key: string]: string }>({})
   const [notifications, setNotifications] = useState<string[]>([])
   const [showNotifications, setShowNotifications] = useState(false)
-  const [lastUpdate, setLastUpdate] = useState(Date.now())
   const [activeFilter, setActiveFilter] = useState("All")
   const [followedUsers, setFollowedUsers] = useState<string[]>([])
   const { toast } = useToast()
@@ -273,100 +298,188 @@ export default function CentraSocialPage() {
     }
   }, [addRandomActivity, addSimulatedPost])
 
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to create posts.",
+        variant: "destructive",
+      })
+      return
+    }
+
     if (newPost.trim() || newPostTitle.trim()) {
-      const post = {
-        id: posts.length + 1,
-        user: "You",
-        handle: "@you",
-        avatar: "/user-profile-illustration.png",
-        level: "Community Member",
-        time: "now",
-        title: newPostTitle || "New Post",
-        content: newPost,
-        image: null,
-        likes: 0,
-        comments: 0,
-        shares: 0,
-        tags: ["Discussion"],
-        category: "Discussion",
-        liked: false,
-        commentsList: [],
+      try {
+        const response = await fetch("/api/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: newPost,
+            title: newPostTitle,
+          }),
+        })
+
+        if (response.ok) {
+          setNewPost("")
+          setNewPostTitle("")
+          setIsCreatingPost(false)
+          toast({
+            title: "Post Created",
+            description: "Your post has been published successfully.",
+          })
+          refetchPosts()
+        } else {
+          throw new Error("Failed to create post")
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to create post. Please try again.",
+          variant: "destructive",
+        })
       }
-      setPosts([post, ...posts])
-      setNewPost("")
-      setNewPostTitle("")
-      setIsCreatingPost(false)
-      setNotifications((prev) => ["You created a new post", ...prev.slice(0, 4)])
     }
   }
 
-  const handleLike = (postId: number) => {
-    setPosts(
-      posts.map((post) =>
-        post.id === postId
-          ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1 }
-          : post,
-      ),
-    )
+  const handleLike = async (postId: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to like posts.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${postId}/like`, {
+        method: "POST",
+      })
+
+      if (response.ok) {
+        refetchPosts() // Refresh to get updated like counts
+      } else {
+        throw new Error("Failed to toggle like")
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update like. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
-  const handleComment = (postId: number) => {
+  const handleAddComment = async (postId: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to comment.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    const commentText = newComment[postId]?.trim()
+    if (commentText) {
+      try {
+        const response = await fetch(`/api/posts/${postId}/comments`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: commentText,
+          }),
+        })
+
+        if (response.ok) {
+          setNewComment((prev) => ({
+            ...prev,
+            [postId]: "",
+          }))
+          refetchPosts() // Refresh to get updated comment counts
+          toast({
+            title: "Comment Added",
+            description: "Your comment has been posted.",
+          })
+        } else {
+          throw new Error("Failed to add comment")
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to add comment. Please try again.",
+          variant: "destructive",
+        })
+      }
+    }
+  }
+
+  const handleComment = (postId: string) => {
     setShowComments((prev) => ({
       ...prev,
       [postId]: !prev[postId],
     }))
   }
 
-  const handleShare = (postId: number) => {
+  const handleShare = (postId: string) => {
     console.log("[v0] Share clicked for post:", postId)
-    setPosts(posts.map((post) => (post.id === postId ? { ...post, shares: post.shares + 1 } : post)))
     setNotifications((prev) => ["You shared a post", ...prev.slice(0, 4)])
-  }
-
-  const handleAddComment = (postId: number) => {
-    const commentText = newComment[postId]?.trim()
-    if (commentText) {
-      const newCommentObj = {
-        id: Date.now(),
-        user: "You",
-        handle: "@you",
-        avatar: "/user-profile-illustration.png",
-        content: commentText,
-        time: "now",
-      }
-
-      setPosts(
-        posts.map((post) =>
-          post.id === postId
-            ? {
-                ...post,
-                commentsList: [newCommentObj, ...post.commentsList],
-                comments: post.comments + 1,
-              }
-            : post,
-        ),
-      )
-
-      setNewComment((prev) => ({
-        ...prev,
-        [postId]: "",
-      }))
-
-      setNotifications((prev) => ["You commented on a post", ...prev.slice(0, 4)])
-    }
+    toast({
+      title: "Post Shared",
+      description: "Post has been shared to your timeline.",
+    })
   }
 
   const refreshFeed = () => {
-    setLastUpdate(Date.now())
-    addRandomActivity()
+    refetchPosts()
     setNotifications((prev) => ["Feed refreshed", ...prev.slice(0, 4)])
+    toast({
+      title: "Feed Refreshed",
+      description: "Latest posts have been loaded.",
+    })
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <h2 className="text-2xl font-semibold">Join Centra Community</h2>
+            <p className="text-muted-foreground">Sign in to connect with the community</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button asChild className="w-full">
+              <Link href="/auth/login">Sign In</Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full bg-transparent">
+              <Link href="/auth/signup">Create Account</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (postsLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading community posts...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-background">
       <PersistentCTA />
 
+      {/* ... existing header code ... */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -419,7 +532,7 @@ export default function CentraSocialPage() {
               </Link>
             </nav>
 
-            {/* Search Bar */}
+            {/* ... existing header content ... */}
             <div className="hidden md:flex flex-1 max-w-md mx-8">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -430,7 +543,6 @@ export default function CentraSocialPage() {
               </div>
             </div>
 
-            {/* Navigation Icons */}
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
@@ -444,7 +556,7 @@ export default function CentraSocialPage() {
                 variant="ghost"
                 size="icon"
                 className="text-muted-foreground hover:text-primary"
-                onClick={() => handleSidebarNavigation("Explore")}
+                onClick={() => toast({ title: "Explore", description: "Explore section coming soon!" })}
               >
                 <Compass className="w-5 h-5" />
               </Button>
@@ -485,7 +597,7 @@ export default function CentraSocialPage() {
                 variant="ghost"
                 size="icon"
                 className="text-muted-foreground hover:text-primary"
-                onClick={() => handleSidebarNavigation("Messages")}
+                onClick={() => toast({ title: "Messages", description: "Messages section coming soon!" })}
               >
                 <Mail className="w-5 h-5" />
               </Button>
@@ -496,7 +608,6 @@ export default function CentraSocialPage() {
                 </Avatar>
               </Link>
 
-              {/* Mobile Menu Toggle */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -508,7 +619,7 @@ export default function CentraSocialPage() {
             </div>
           </div>
 
-          {/* Mobile Navigation Menu */}
+          {/* ... existing mobile menu ... */}
           {isMobileMenuOpen && (
             <div className="lg:hidden border-t border-border bg-card">
               <nav className="py-4 space-y-2">
@@ -569,6 +680,7 @@ export default function CentraSocialPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* ... existing sidebar ... */}
           <aside className="lg:col-span-1">
             <Card className="mb-6">
               <CardHeader className="pb-3">
@@ -586,7 +698,7 @@ export default function CentraSocialPage() {
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-muted-foreground hover:text-primary"
-                  onClick={() => handleSidebarNavigation("Explore")}
+                  onClick={() => toast({ title: "Explore", description: "Explore section coming soon!" })}
                 >
                   <Compass className="w-4 h-4 mr-3" />
                   Explore
@@ -602,7 +714,7 @@ export default function CentraSocialPage() {
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-muted-foreground hover:text-primary"
-                  onClick={() => handleSidebarNavigation("Settings")}
+                  onClick={() => toast({ title: "Settings", description: "Settings section coming soon!" })}
                 >
                   <Settings className="w-4 h-4 mr-3" />
                   Settings
@@ -619,28 +731,42 @@ export default function CentraSocialPage() {
                   { name: "Crypto Mike", handle: "@cryptomike", avatar: "/crypto-user.png" },
                   { name: "DeFi Sarah", handle: "@defisarah", avatar: "/defi-user.png" },
                   { name: "Blockchain Dev", handle: "@blockdev", avatar: "/developer-working.png" },
-                ].map((user, index) => (
+                ].map((suggestedUser, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-10 h-10">
-                        <AvatarImage src={user.avatar || "/placeholder.svg"} />
-                        <AvatarFallback>{user.name[0]}</AvatarFallback>
+                        <AvatarImage src={suggestedUser.avatar || "/placeholder.svg"} />
+                        <AvatarFallback>{suggestedUser.name[0]}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium text-sm text-foreground">{user.name}</p>
-                        <p className="text-xs text-muted-foreground">{user.handle}</p>
+                        <p className="font-medium text-sm text-foreground">{suggestedUser.name}</p>
+                        <p className="text-xs text-muted-foreground">{suggestedUser.handle}</p>
                       </div>
                     </div>
                     <Button
                       size="sm"
-                      onClick={() => handleFollowUser(user.handle)}
+                      onClick={() => {
+                        if (followedUsers.includes(suggestedUser.handle)) {
+                          setFollowedUsers(followedUsers.filter((u) => u !== suggestedUser.handle))
+                          toast({
+                            title: "Unfollowed",
+                            description: `You unfollowed ${suggestedUser.handle}`,
+                          })
+                        } else {
+                          setFollowedUsers([...followedUsers, suggestedUser.handle])
+                          toast({
+                            title: "Following",
+                            description: `You are now following ${suggestedUser.handle}`,
+                          })
+                        }
+                      }}
                       className={
-                        followedUsers.includes(user.handle)
+                        followedUsers.includes(suggestedUser.handle)
                           ? "bg-muted text-muted-foreground hover:bg-muted/80"
                           : "bg-primary hover:bg-primary/90 text-primary-foreground"
                       }
                     >
-                      {followedUsers.includes(user.handle) ? "Following" : "Follow"}
+                      {followedUsers.includes(suggestedUser.handle) ? "Following" : "Follow"}
                     </Button>
                   </div>
                 ))}
@@ -663,7 +789,7 @@ export default function CentraSocialPage() {
               </Button>
             </div>
 
-            {/* Create Post */}
+            {/* ... existing create post section ... */}
             <Card className="mb-6">
               <CardContent className="p-4">
                 {!isCreatingPost ? (
@@ -719,7 +845,7 @@ export default function CentraSocialPage() {
                           onClick={() =>
                             toast({
                               title: "Photo Upload",
-                              description: "Photo upload would work here in a real application.",
+                              description: "Photo upload coming soon!",
                             })
                           }
                         >
@@ -771,160 +897,145 @@ export default function CentraSocialPage() {
               ))}
             </div>
 
-            {/* Posts Feed */}
             <div className="space-y-6">
-              {filteredPosts.map((post) => (
-                <Card key={post.id} className="hover:shadow-lg transition-shadow">
-                  {/* ... existing post content ... */}
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-10 h-10">
-                          <AvatarImage src={post.avatar || "/placeholder.svg"} />
-                          <AvatarFallback>{post.user[0]}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-foreground">{post.user}</h3>
-                            <span className="text-sm text-muted-foreground">{post.handle}</span>
-                            <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
-                              {post.level}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{post.time}</p>
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="icon" className="text-muted-foreground">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="pt-0">
-                    <h4 className="text-lg font-medium text-foreground mb-2">{post.title}</h4>
-                    <p className="text-muted-foreground mb-4">{post.content}</p>
-
-                    {post.image && (
-                      <div className="mb-4 rounded-lg overflow-hidden">
-                        <img
-                          src={post.image || "/placeholder.svg"}
-                          alt="Post content"
-                          className="w-full h-64 object-cover"
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-2 mb-4">
-                      {post.tags.map((tag, tagIndex) => (
-                        <Badge key={tagIndex} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-border">
-                      <div className="flex items-center gap-6">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`transition-colors ${
-                            post.liked ? "text-red-500 hover:text-red-600" : "text-muted-foreground hover:text-primary"
-                          }`}
-                          onClick={() => handleLike(post.id)}
-                        >
-                          <Heart className={`w-4 h-4 mr-1 ${post.liked ? "fill-current" : ""}`} />
-                          {post.likes}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`transition-colors ${
-                            showComments[post.id] ? "text-primary" : "text-muted-foreground hover:text-primary"
-                          }`}
-                          onClick={() => handleComment(post.id)}
-                        >
-                          <MessageCircle className="w-4 h-4 mr-1" />
-                          {post.comments}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-muted-foreground hover:text-primary"
-                          onClick={() => handleShare(post.id)}
-                        >
-                          <Share2 className="w-4 h-4 mr-1" />
-                          {post.shares}
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Comments Section */}
-                    {showComments[post.id] && (
-                      <div className="mt-4 pt-4 border-t border-border">
-                        {/* Add Comment Input */}
-                        <div className="flex items-center gap-3 mb-4">
-                          <Avatar className="w-8 h-8">
-                            <AvatarImage src="/user-profile-illustration.png" />
-                            <AvatarFallback>You</AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 flex gap-2">
-                            <Input
-                              placeholder="Write a comment..."
-                              value={newComment[post.id] || ""}
-                              onChange={(e) =>
-                                setNewComment((prev) => ({
-                                  ...prev,
-                                  [post.id]: e.target.value,
-                                }))
-                              }
-                              className="bg-muted border-0 focus:ring-2 focus:ring-primary"
-                              onKeyPress={(e) => {
-                                if (e.key === "Enter") {
-                                  handleAddComment(post.id)
-                                }
-                              }}
-                            />
-                            <Button
-                              size="sm"
-                              onClick={() => handleAddComment(post.id)}
-                              disabled={!newComment[post.id]?.trim()}
-                              className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                            >
-                              <Send className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Comments List */}
-                        <div className="space-y-3">
-                          {post.commentsList.map((comment) => (
-                            <div key={comment.id} className="flex items-start gap-3">
-                              <Avatar className="w-8 h-8">
-                                <AvatarImage src={comment.avatar || "/placeholder.svg"} />
-                                <AvatarFallback>{comment.user[0]}</AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1 bg-muted rounded-lg p-3">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-medium text-sm text-foreground">{comment.user}</span>
-                                  <span className="text-xs text-muted-foreground">{comment.handle}</span>
-                                  <span className="text-xs text-muted-foreground">•</span>
-                                  <span className="text-xs text-muted-foreground">{comment.time}</span>
-                                </div>
-                                <p className="text-sm text-foreground">{comment.content}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
+              {realtimePosts.length === 0 ? (
+                <Card className="p-8 text-center">
+                  <p className="text-muted-foreground">No posts yet. Be the first to share something!</p>
                 </Card>
-              ))}
+              ) : (
+                realtimePosts.map((post) => (
+                  <Card key={post.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={post.profiles?.avatar_url || "/placeholder.svg"} />
+                            <AvatarFallback>{post.profiles?.display_name?.[0] || "U"}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-semibold text-foreground">
+                                {post.profiles?.display_name || "Unknown User"}
+                              </h3>
+                              <span className="text-sm text-muted-foreground">
+                                @{post.profiles?.username || "unknown"}
+                              </span>
+                              <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
+                                Community Member
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(post.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="icon" className="text-muted-foreground">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-0">
+                      <p className="text-muted-foreground mb-4">{post.content}</p>
+
+                      {post.image_url && (
+                        <div className="mb-4 rounded-lg overflow-hidden">
+                          <img
+                            src={post.image_url || "/placeholder.svg"}
+                            alt="Post content"
+                            className="w-full h-64 object-cover"
+                          />
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between pt-3 border-t border-border">
+                        <div className="flex items-center gap-6">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`transition-colors ${
+                              post.user_has_liked
+                                ? "text-red-500 hover:text-red-600"
+                                : "text-muted-foreground hover:text-primary"
+                            }`}
+                            onClick={() => handleLike(post.id)}
+                          >
+                            <Heart className={`w-4 h-4 mr-1 ${post.user_has_liked ? "fill-current" : ""}`} />
+                            {post.likes_count || 0}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`transition-colors ${
+                              showComments[post.id] ? "text-primary" : "text-muted-foreground hover:text-primary"
+                            }`}
+                            onClick={() => handleComment(post.id)}
+                          >
+                            <MessageCircle className="w-4 h-4 mr-1" />
+                            {post.comments_count || 0}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-muted-foreground hover:text-primary"
+                            onClick={() => handleShare(post.id)}
+                          >
+                            <Share2 className="w-4 h-4 mr-1" />
+                            Share
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Comments Section */}
+                      {showComments[post.id] && (
+                        <div className="mt-4 pt-4 border-t border-border">
+                          {/* Add Comment Input */}
+                          <div className="flex items-center gap-3 mb-4">
+                            <Avatar className="w-8 h-8">
+                              <AvatarImage src="/user-profile-illustration.png" />
+                              <AvatarFallback>You</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 flex gap-2">
+                              <Input
+                                placeholder="Write a comment..."
+                                value={newComment[post.id] || ""}
+                                onChange={(e) =>
+                                  setNewComment((prev) => ({
+                                    ...prev,
+                                    [post.id]: e.target.value,
+                                  }))
+                                }
+                                className="bg-muted border-0 focus:ring-2 focus:ring-primary"
+                                onKeyPress={(e) => {
+                                  if (e.key === "Enter") {
+                                    handleAddComment(post.id)
+                                  }
+                                }}
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => handleAddComment(post.id)}
+                                disabled={!newComment[post.id]?.trim()}
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                              >
+                                <Send className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+
+                          <CommentsSection postId={post.id} />
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
           </main>
         </div>
       </div>
 
+      {/* ... existing footer section ... */}
       <section className="py-16 bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center mb-12">
@@ -955,6 +1066,38 @@ export default function CentraSocialPage() {
           </div>
         </div>
       </section>
+    </div>
+  )
+}
+
+function CommentsSection({ postId }: { postId: string }) {
+  const { comments, loading } = useRealtimeComments(postId)
+
+  if (loading) {
+    return <div className="text-sm text-muted-foreground">Loading comments...</div>
+  }
+
+  return (
+    <div className="space-y-3">
+      {comments.map((comment) => (
+        <div key={comment.id} className="flex items-start gap-3">
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={comment.profiles?.avatar_url || "/placeholder.svg"} />
+            <AvatarFallback>{comment.profiles?.display_name?.[0] || "U"}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 bg-muted rounded-lg p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-medium text-sm text-foreground">
+                {comment.profiles?.display_name || "Unknown User"}
+              </span>
+              <span className="text-xs text-muted-foreground">@{comment.profiles?.username || "unknown"}</span>
+              <span className="text-xs text-muted-foreground">•</span>
+              <span className="text-xs text-muted-foreground">{new Date(comment.created_at).toLocaleDateString()}</span>
+            </div>
+            <p className="text-sm text-foreground">{comment.content}</p>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
