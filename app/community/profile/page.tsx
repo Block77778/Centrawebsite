@@ -25,60 +25,200 @@ import {
   Camera,
   Save,
   X,
+  RefreshCw,
 } from "lucide-react"
 import PersistentCTA from "../../../components/PersistentCTA"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { createClient } from "@/lib/supabase/client"
+import { useToast } from "@/hooks/use-toast"
+
+interface Profile {
+  id: string
+  username: string
+  display_name: string
+  bio?: string
+  location?: string
+  website?: string
+  avatar_url?: string
+  created_at: string
+}
+
+interface Post {
+  id: string
+  content: string
+  created_at: string
+  likes_count?: number
+  comments_count?: number
+}
 
 export default function ProfilePage() {
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [userPosts, setUserPosts] = useState<Post[]>([])
   const [isEditing, setIsEditing] = useState(false)
-  const [profile, setProfile] = useState({
-    name: "You",
-    handle: "@you",
-    bio: "Passionate about cryptocurrency and decentralized finance. Building the future of money with Centra.",
-    location: "San Francisco, CA",
-    website: "https://centra.tech",
-    joinDate: "January 2024",
-    avatar: "/user-profile-illustration.png",
-    coverImage: "/abstract-tech-background.png",
-    followers: 1247,
-    following: 892,
-    posts: 156,
+  const [loading, setLoading] = useState(true)
+  const [editForm, setEditForm] = useState({
+    display_name: "",
+    bio: "",
+    location: "",
+    website: "",
   })
+  const { toast } = useToast()
+  const supabase = createClient()
 
-  const [editForm, setEditForm] = useState(profile)
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        setUser(user)
+        await fetchProfile(user.id)
+        await fetchUserPosts(user.id)
+      } else {
+        // Redirect to login if not authenticated
+        window.location.href = "/auth/login"
+      }
+      setLoading(false)
+    }
+    getUser()
+  }, [])
 
-  const userPosts = [
-    {
-      id: 1,
-      title: "My thoughts on Centra's roadmap",
-      content: "Just read through the latest roadmap updates and I'm really excited about the upcoming features...",
-      time: "2h",
-      likes: 12,
-      comments: 5,
-      shares: 2,
-      tags: ["Discussion", "Roadmap"],
-    },
-    {
-      id: 2,
-      title: "Welcome to Centra Social!",
-      content:
-        "Just joined the community and loving the discussions here. Looking forward to connecting with fellow crypto enthusiasts!",
-      time: "1d",
-      likes: 8,
-      comments: 3,
-      shares: 1,
-      tags: ["Introduction"],
-    },
-  ]
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
-  const handleSaveProfile = () => {
-    setProfile(editForm)
-    setIsEditing(false)
+      if (error) throw error
+
+      setProfile(profile)
+      setEditForm({
+        display_name: profile.display_name || "",
+        bio: profile.bio || "",
+        location: profile.location || "",
+        website: profile.website || "",
+      })
+    } catch (error) {
+      console.error("[v0] Error fetching profile:", error)
+      toast({
+        title: "Error",
+        description: "Failed to load profile data.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const fetchUserPosts = async (userId: string) => {
+    try {
+      const { data: posts, error } = await supabase
+        .from("posts")
+        .select(`
+          *,
+          likes (count),
+          comments (count)
+        `)
+        .eq("author_id", userId)
+        .order("created_at", { ascending: false })
+
+      if (error) throw error
+
+      const postsWithStats =
+        posts?.map((post) => ({
+          ...post,
+          likes_count: post.likes?.[0]?.count || 0,
+          comments_count: post.comments?.[0]?.count || 0,
+        })) || []
+
+      setUserPosts(postsWithStats)
+    } catch (error) {
+      console.error("[v0] Error fetching user posts:", error)
+    }
+  }
+
+  const handleSaveProfile = async () => {
+    if (!user || !profile) return
+
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          display_name: editForm.display_name,
+          bio: editForm.bio,
+          location: editForm.location,
+          website: editForm.website,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id)
+
+      if (error) throw error
+
+      // Update local state
+      setProfile({
+        ...profile,
+        display_name: editForm.display_name,
+        bio: editForm.bio,
+        location: editForm.location,
+        website: editForm.website,
+      })
+
+      setIsEditing(false)
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated.",
+      })
+    } catch (error) {
+      console.error("[v0] Error updating profile:", error)
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   const handleCancelEdit = () => {
-    setEditForm(profile)
+    if (profile) {
+      setEditForm({
+        display_name: profile.display_name || "",
+        bio: profile.bio || "",
+        location: profile.location || "",
+        website: profile.website || "",
+      })
+    }
     setIsEditing(false)
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    window.location.href = "/auth/login"
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading profile...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user || !profile) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <h2 className="text-2xl font-semibold">Profile Not Found</h2>
+            <p className="text-muted-foreground">Please sign in to view your profile</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button asChild className="w-full">
+              <Link href="/auth/login">Sign In</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -129,6 +269,13 @@ export default function ProfilePage() {
                 <BookOpen className="w-4 h-4" />
                 Blog
               </Link>
+              <Button
+                variant="ghost"
+                onClick={handleSignOut}
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                Sign Out
+              </Button>
             </nav>
           </div>
         </div>
@@ -140,7 +287,7 @@ export default function ProfilePage() {
           <div className="relative">
             {/* Cover Image */}
             <div className="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-t-lg relative overflow-hidden">
-              <img src={profile.coverImage || "/placeholder.svg"} alt="Cover" className="w-full h-full object-cover" />
+              <div className="w-full h-full bg-gradient-to-br from-[#1C60FF]/20 to-[#1C60FF]/5" />
               {isEditing && (
                 <Button variant="secondary" size="sm" className="absolute top-4 right-4">
                   <Camera className="w-4 h-4 mr-2" />
@@ -156,8 +303,8 @@ export default function ProfilePage() {
                   {/* Avatar */}
                   <div className="relative">
                     <Avatar className="w-32 h-32 border-4 border-background">
-                      <AvatarImage src={profile.avatar || "/placeholder.svg"} />
-                      <AvatarFallback className="text-2xl">{profile.name[0]}</AvatarFallback>
+                      <AvatarImage src={profile.avatar_url || "/user-profile-illustration.png"} />
+                      <AvatarFallback className="text-2xl">{profile.display_name?.[0] || "U"}</AvatarFallback>
                     </Avatar>
                     {isEditing && (
                       <Button
@@ -174,23 +321,19 @@ export default function ProfilePage() {
                   <div className="pb-4">
                     {!isEditing ? (
                       <>
-                        <h1 className="text-2xl font-bold text-foreground">{profile.name}</h1>
-                        <p className="text-muted-foreground">{profile.handle}</p>
-                        <p className="text-foreground mt-2 max-w-md">{profile.bio}</p>
+                        <h1 className="text-2xl font-bold text-foreground">{profile.display_name}</h1>
+                        <p className="text-muted-foreground">@{profile.username}</p>
+                        <p className="text-foreground mt-2 max-w-md">{profile.bio || "No bio yet."}</p>
                       </>
                     ) : (
                       <div className="space-y-2 min-w-[300px]">
                         <Input
-                          value={editForm.name}
-                          onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                          value={editForm.display_name}
+                          onChange={(e) => setEditForm({ ...editForm, display_name: e.target.value })}
                           placeholder="Display name"
                           className="font-bold text-lg"
                         />
-                        <Input
-                          value={editForm.handle}
-                          onChange={(e) => setEditForm({ ...editForm, handle: e.target.value })}
-                          placeholder="@username"
-                        />
+                        <Input value={`@${profile.username}`} disabled className="text-muted-foreground" />
                         <Textarea
                           value={editForm.bio}
                           onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
@@ -214,14 +357,23 @@ export default function ProfilePage() {
                           {profile.website && (
                             <div className="flex items-center gap-1">
                               <LinkIcon className="w-4 h-4" />
-                              <a href={profile.website} className="text-primary hover:underline">
-                                centra.tech
+                              <a
+                                href={profile.website}
+                                className="text-primary hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {profile.website.replace(/^https?:\/\//, "")}
                               </a>
                             </div>
                           )}
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            Joined {profile.joinDate}
+                            Joined{" "}
+                            {new Date(profile.created_at).toLocaleDateString("en-US", {
+                              month: "long",
+                              year: "numeric",
+                            })}
                           </div>
                         </>
                       ) : (
@@ -276,15 +428,15 @@ export default function ProfilePage() {
               {/* Stats */}
               <div className="flex gap-6 mt-6 pt-4 border-t border-border">
                 <div className="text-center">
-                  <div className="font-bold text-lg text-foreground">{profile.posts}</div>
+                  <div className="font-bold text-lg text-foreground">{userPosts.length}</div>
                   <div className="text-sm text-muted-foreground">Posts</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-lg text-foreground">{profile.followers.toLocaleString()}</div>
+                  <div className="font-bold text-lg text-foreground">0</div>
                   <div className="text-sm text-muted-foreground">Followers</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-lg text-foreground">{profile.following}</div>
+                  <div className="font-bold text-lg text-foreground">0</div>
                   <div className="text-sm text-muted-foreground">Following</div>
                 </div>
               </div>
@@ -302,60 +454,66 @@ export default function ProfilePage() {
           </TabsList>
 
           <TabsContent value="posts" className="space-y-6 mt-6">
-            {userPosts.map((post) => (
-              <Card key={post.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={profile.avatar || "/placeholder.svg"} />
-                        <AvatarFallback>{profile.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-foreground">{profile.name}</h3>
-                          <span className="text-sm text-muted-foreground">{profile.handle}</span>
-                          <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
-                            Community Member
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{post.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="pt-0">
-                  <h4 className="text-lg font-medium text-foreground mb-2">{post.title}</h4>
-                  <p className="text-muted-foreground mb-4">{post.content}</p>
-
-                  <div className="flex items-center gap-2 mb-4">
-                    {post.tags.map((tag, tagIndex) => (
-                      <Badge key={tagIndex} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-border">
-                    <div className="flex items-center gap-6">
-                      <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                        <Heart className="w-4 h-4 mr-1" />
-                        {post.likes}
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                        <MessageCircle className="w-4 h-4 mr-1" />
-                        {post.comments}
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                        <Share2 className="w-4 h-4 mr-1" />
-                        {post.shares}
-                      </Button>
-                    </div>
-                  </div>
+            {userPosts.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <MessageCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">No posts yet</h3>
+                  <p className="text-muted-foreground mb-4">Share your thoughts with the community!</p>
+                  <Button asChild>
+                    <Link href="/community">Create Your First Post</Link>
+                  </Button>
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              userPosts.map((post) => (
+                <Card key={post.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage src={profile.avatar_url || "/user-profile-illustration.png"} />
+                          <AvatarFallback>{profile.display_name?.[0] || "U"}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-foreground">{profile.display_name}</h3>
+                            <span className="text-sm text-muted-foreground">@{profile.username}</span>
+                            <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
+                              Community Member
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(post.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="pt-0">
+                    <p className="text-muted-foreground mb-4">{post.content}</p>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-border">
+                      <div className="flex items-center gap-6">
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                          <Heart className="w-4 h-4 mr-1" />
+                          {post.likes_count || 0}
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                          <MessageCircle className="w-4 h-4 mr-1" />
+                          {post.comments_count || 0}
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                          <Share2 className="w-4 h-4 mr-1" />
+                          Share
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </TabsContent>
 
           <TabsContent value="likes" className="mt-6">
